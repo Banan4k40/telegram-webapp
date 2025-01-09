@@ -8,62 +8,102 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff; /* Білий фон */
         }
-        .hidden {
-            display: none;
-        }
-        .form-section {
-            margin-bottom: 20px;
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
         }
         .button {
-            padding: 10px 20px;
-            background-color: #0088cc;
+            padding: 15px 30px;
+            font-size: 18px;
             color: white;
+            background-color: #0088cc;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+        }
+        .button img {
+            width: 30px;
+            height: 30px;
         }
         .button:hover {
             background-color: #005f8f;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <h1>Заповнення заявки</h1>
+    <div class="container">
+        <h1>Заповнення заявки</h1>
 
-    <div id="main-menu" class="form-section">
-        <button class="button" onclick="startApplication()">Оформити заявку</button>
-    </div>
+        <div id="main-menu">
+            <button class="button" onclick="startApplication()">
+                <img src="https://img.icons8.com/ios/50/application.png" alt="Application Icon">
+                Оформити заявку
+            </button>
+        </div>
 
-    <div id="application-form" class="form-section hidden">
-        <label>Виберіть лінію:</label><br>
-        <button class="button" onclick="selectLine('DID')">Лінія DID</button>
-        <button class="button" onclick="selectLine('PH')">Лінія PH</button>
-    </div>
+        <div id="application-form" class="hidden">
+            <button class="button" onclick="selectLine('DID')">
+                <img src="https://img.icons8.com/ios/50/phone.png" alt="DID Icon">
+                Лінія DID
+            </button>
+            <button class="button" onclick="selectLine('PH')">
+                <img src="https://img.icons8.com/ios/50/phone-office.png" alt="PH Icon">
+                Лінія PH
+            </button>
+        </div>
 
-    <div id="details-form" class="form-section hidden">
-        <label>Введіть номер телефону:</label><br>
-        <input type="text" id="phone-number" placeholder="+380XXXXXXXXX"><br><br>
-        <label>Введіть час дзвінка:</label><br>
-        <input type="text" id="call-time" placeholder="HH:MM"><br><br>
-        <button class="button" onclick="submitDetails()">Відправити</button>
-    </div>
+        <div id="details-form" class="hidden">
+            <label>Введіть номер телефону:</label><br>
+            <input type="text" id="phone-number" placeholder="+380XXXXXXXXX"><br><br>
+            <label>Введіть час дзвінка:</label><br>
+            <input type="text" id="call-time" placeholder="HH:MM"><br><br>
+            <button class="button" onclick="submitDetails()">
+                <img src="https://img.icons8.com/ios/50/submit-progress.png" alt="Submit Icon">
+                Відправити
+            </button>
+        </div>
 
-    <div id="confirmation-form" class="form-section hidden">
-        <p>Був дзвінок з іншої лінії?</p>
-        <button class="button" onclick="confirmCall('Так')">Так</button>
-        <button class="button" onclick="confirmCall('Ні')">Ні</button>
-    </div>
+        <div id="confirmation-form" class="hidden">
+            <p>Був дзвінок з іншої лінії?</p>
+            <button class="button" onclick="confirmCall('Так')">
+                <img src="https://img.icons8.com/ios/50/checkmark.png" alt="Yes Icon">
+                Так
+            </button>
+            <button class="button" onclick="confirmCall('Ні')">
+                <img src="https://img.icons8.com/ios/50/cancel.png" alt="No Icon">
+                Ні
+            </button>
+        </div>
 
-    <div id="comment-form" class="form-section hidden">
-        <label>Додайте коментар:</label><br>
-        <textarea id="comment" rows="4" cols="50"></textarea><br><br>
-        <button class="button" onclick="sendApplication()">Відправити заявку</button>
-    </div>
+        <div id="comment-form" class="hidden">
+            <label>Додайте коментар:</label><br>
+            <textarea id="comment" rows="4" cols="50"></textarea><br><br>
+            <button class="button" onclick="sendApplication()">
+                <img src="https://img.icons8.com/ios/50/share.png" alt="Send Icon">
+                Відправити заявку
+            </button>
+        </div>
 
-    <div id="success-message" class="form-section hidden">
-        <h2>Заявку відправлено!</h2>
+        <div id="success-message" class="hidden">
+            <h2>Заявку відправлено!</h2>
+        </div>
     </div>
 
     <script>
@@ -84,7 +124,6 @@
             const phoneNumber = document.getElementById('phone-number').value;
             const callTime = document.getElementById('call-time').value;
 
-            // Валідація
             const phoneRegex = /^\+?\d{10,15}$/;
             const timeRegex = /^\d{1,2}:\d{2}$/;
 
@@ -114,7 +153,6 @@
             const comment = document.getElementById('comment').value;
             applicationData['comment'] = comment;
 
-            // Відправка заявки на сервер
             fetch('/submit_application', {
                 method: 'POST',
                 headers: {
