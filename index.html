@@ -3,175 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Form</title>
+    <title>Support Телефония</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            height: 100vh;
+            height: 100vh; /* Задаємо висоту на весь екран */
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column; /* Вертикальне розташування елементів */
+            align-items: center; /* Центрування по горизонталі */
+            justify-content: center; /* Центрування по вертикалі */
             background-color: #ffffff; /* Білий фон */
         }
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 600px;
-        }
-        .button {
-            padding: 15px 30px;
-            font-size: 18px;
+        .complaint-button {
+            padding: 15px 25px;
+            background-color: #ff5733; /* Червоний колір для кнопки */
             color: white;
-            background-color: #0088cc;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            margin: 10px 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            text-align: center;
+            font-size: 18px;
+            margin: 10px;
         }
-        .button img {
-            width: 30px;
-            height: 30px;
+        .complaint-button img {
+            width: 35px; /* Більший розмір іконки */
+            height: 35px;
+            margin-right: 15px;
+        }
+        .additional-buttons {
+            display: none; /* Спочатку кнопки приховані */
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
         }
         .button:hover {
             background-color: #005f8f;
         }
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Заповнення заявки</h1>
+    <!-- Кнопка "Жалобы" -->
+    <button class="complaint-button" id="complaintButton" onclick="showComplaintButtons()">
+        <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
+        Жалобы
+    </button>
 
-        <div id="main-menu">
-            <button class="button" onclick="startApplication()">
-                <img src="https://img.icons8.com/ios/50/application.png" alt="Application Icon">
-                Оформити заявку
-            </button>
-        </div>
+    <!-- Кнопка "Статистика" -->
+    <button class="complaint-button" id="statsButton" onclick="showStatsButtons()">
+        <img src="https://img.icons8.com/ios/452/statistics.png" alt="Stats Icon" />
+        Статистика
+    </button>
 
-        <div id="application-form" class="hidden">
-            <button class="button" onclick="selectLine('DID')">
-                <img src="https://img.icons8.com/ios/50/phone.png" alt="DID Icon">
-                Лінія DID
-            </button>
-            <button class="button" onclick="selectLine('PH')">
-                <img src="https://img.icons8.com/ios/50/phone-office.png" alt="PH Icon">
-                Лінія PH
-            </button>
-        </div>
+    <!-- Додаткові кнопки для "Жалобы" -->
+    <div id="complaintButtons" class="additional-buttons">
+        <button class="button">Нет дозвона</button>
+        <button class="button">Клиента плохо слишно</button>
+        <button class="button">Сервис недоступен</button>
+    </div>
 
-        <div id="details-form" class="hidden">
-            <label>Введіть номер телефону:</label><br>
-            <input type="text" id="phone-number" placeholder="+380XXXXXXXXX"><br><br>
-            <label>Введіть час дзвінка:</label><br>
-            <input type="text" id="call-time" placeholder="HH:MM"><br><br>
-            <button class="button" onclick="submitDetails()">
-                <img src="https://img.icons8.com/ios/50/submit-progress.png" alt="Submit Icon">
-                Відправити
-            </button>
-        </div>
-
-        <div id="confirmation-form" class="hidden">
-            <p>Був дзвінок з іншої лінії?</p>
-            <button class="button" onclick="confirmCall('Так')">
-                <img src="https://img.icons8.com/ios/50/checkmark.png" alt="Yes Icon">
-                Так
-            </button>
-            <button class="button" onclick="confirmCall('Ні')">
-                <img src="https://img.icons8.com/ios/50/cancel.png" alt="No Icon">
-                Ні
-            </button>
-        </div>
-
-        <div id="comment-form" class="hidden">
-            <label>Додайте коментар:</label><br>
-            <textarea id="comment" rows="4" cols="50"></textarea><br><br>
-            <button class="button" onclick="sendApplication()">
-                <img src="https://img.icons8.com/ios/50/share.png" alt="Send Icon">
-                Відправити заявку
-            </button>
-        </div>
-
-        <div id="success-message" class="hidden">
-            <h2>Заявку відправлено!</h2>
-        </div>
+    <!-- Додаткові кнопки для "Статистика" -->
+    <div id="statsButtons" class="additional-buttons">
+        <button class="button">За сьогодні</button>
+        <button class="button">За день</button>
+        <button class="button">За тиждень</button>
     </div>
 
     <script>
-        let applicationData = {};
+        function showComplaintButtons() {
+            // Приховуємо кнопку "Жалобы"
+            document.getElementById("complaintButton").style.display = "none";
+            document.getElementById("statsButton").style.display = "none";
 
-        function startApplication() {
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('application-form').classList.remove('hidden');
+            // Показуємо додаткові кнопки "Жалобы"
+            document.getElementById("complaintButtons").style.display = "block";
         }
 
-        function selectLine(line) {
-            applicationData['line'] = line;
-            document.getElementById('application-form').classList.add('hidden');
-            document.getElementById('details-form').classList.remove('hidden');
-        }
+        function showStatsButtons() {
+            // Приховуємо кнопку "Статистика"
+            document.getElementById("statsButton").style.display = "none";
+            document.getElementById("complaintButton").style.display = "none";
 
-        function submitDetails() {
-            const phoneNumber = document.getElementById('phone-number').value;
-            const callTime = document.getElementById('call-time').value;
-
-            const phoneRegex = /^\+?\d{10,15}$/;
-            const timeRegex = /^\d{1,2}:\d{2}$/;
-
-            if (!phoneRegex.test(phoneNumber)) {
-                alert('Некоректний номер телефону!');
-                return;
-            }
-            if (!timeRegex.test(callTime)) {
-                alert('Некоректний час дзвінка!');
-                return;
-            }
-
-            applicationData['phoneNumber'] = phoneNumber;
-            applicationData['callTime'] = callTime;
-
-            document.getElementById('details-form').classList.add('hidden');
-            document.getElementById('confirmation-form').classList.remove('hidden');
-        }
-
-        function confirmCall(response) {
-            applicationData['otherLineCall'] = response;
-            document.getElementById('confirmation-form').classList.add('hidden');
-            document.getElementById('comment-form').classList.remove('hidden');
-        }
-
-        function sendApplication() {
-            const comment = document.getElementById('comment').value;
-            applicationData['comment'] = comment;
-
-            fetch('/submit_application', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(applicationData)
-            })
-                .then(response => {
-                    if (response.ok) {
-                        document.getElementById('comment-form').classList.add('hidden');
-                        document.getElementById('success-message').classList.remove('hidden');
-                    } else {
-                        alert('Помилка відправки заявки!');
-                    }
-                })
-                .catch(error => {
-                    console.error('Помилка:', error);
-                    alert('Помилка з’єднання з сервером!');
-                });
+            // Показуємо додаткові кнопки "Статистика"
+            document.getElementById("statsButtons").style.display = "block";
         }
     </script>
 </body>
