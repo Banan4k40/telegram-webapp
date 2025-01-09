@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 20px;
+            background-color: #ffffff; /* Білий фон */
         }
         .button {
             padding: 10px 20px;
@@ -17,15 +18,49 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin: 10px;
         }
         .button:hover {
             background-color: #0077b5;
+        }
+        .complaint-button {
+            padding: 10px 20px;
+            background-color: #ff3333; /* Червоний колір для кнопки жалоби */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .complaint-button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .additional-buttons {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <h1>Welcome to the Telegram WebApp</h1>
     <p>This is a simple WebApp connected with Telegram.</p>
-    <button class="button" onclick="alert('Hello from WebApp!')">Click Me</button>
+
+    <!-- Кнопка жалоби з іконкою -->
+    <button class="complaint-button">
+        <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
+        Report a Problem
+    </button>
+
+    <!-- Додаткові кнопки -->
+    <div class="additional-buttons">
+        <button class="button">Button 1</button>
+        <button class="button">Button 2</button>
+        <button class="button">Button 3</button>
+        <button class="button">Button 4</button>
+    </div>
 </body>
 </html>
