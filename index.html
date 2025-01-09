@@ -24,21 +24,22 @@
             background-color: #0077b5;
         }
         .complaint-button {
-            padding: 10px 20px;
-            background-color: #ff3333; /* Червоний колір для кнопки жалоби */
+            padding: 15px 25px;
+            background-color: #ff5733; /* Оновлений колір для кнопки жалоби */
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            margin: 10px;
+            margin: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 18px;
         }
         .complaint-button img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
+            width: 35px; /* Більший розмір іконки */
+            height: 35px;
+            margin-right: 15px;
         }
         .additional-buttons {
             margin-top: 20px;
@@ -50,15 +51,15 @@
     <h1>Welcome to the Telegram WebApp</h1>
     <p>This is a simple WebApp connected with Telegram.</p>
     
-    <!-- Кнопка жалоби з іконкою -->
+    <!-- Кнопка жалоби з іконкою на російській мові -->
     <button class="complaint-button" onclick="showAdditionalButtons()">
         <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
-        Report a Problem
+        Пожаловаться
     </button>
 
     <!-- Додаткові кнопки, які з'являться після натискання -->
     <div class="additional-buttons" id="additional-buttons">
-        <button class="button">Недозвон</button>
+        <button class="button">Button 1</button>
         <button class="button">Button 2</button>
         <button class="button">Button 3</button>
         <button class="button">Button 4</button>
