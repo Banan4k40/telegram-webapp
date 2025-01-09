@@ -40,16 +40,35 @@
         Жалобы
     </button>
     
+   <div id="additional-buttons" style="display: none;">
+    <button class="button">Button 1</button>
+    <button class="button">Button 2</button>
+    <button class="button">Button 3</button>
+</div>
+
+function showAdditionalButtons() {
+    // Приховуємо кнопку "Жалоба"
+    const complaintButton = document.querySelector(".complaint-button");
+    complaintButton.style.display = "none";
+
+    // Показуємо додаткові кнопки
+    const additionalButtons = document.getElementById("additional-buttons");
+    additionalButtons.style.display = "block";
+}
+    
  <!-- Кнопка жалоби з іконкою на російській мові -->
     <button class="complaint-button" onclick="showAdditionalButtons()">
         <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
         Статистика
     </button>
     
-    <script>
-        function showAdditionalButtons() {
-            alert("Додаткові кнопки будуть додані тут!");
+   <div id="additional-buttons" style="display: none;">
+    <button class="button">Button 1</button>
+    <button class="button">Button 2</button>
+    <button class="button">Button 3</button>
+</div>
         }
+    
     </script>
 </body>
 </html>
