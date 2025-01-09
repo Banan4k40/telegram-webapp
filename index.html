@@ -3,25 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram WebApp</title>
+    <title>Support Телефония</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 20px;
+            margin: 0;
+            height: 100vh; /* Задаємо висоту на весь екран */
+            display: flex;
+            align-items: center; /* Центрування по вертикалі */
+            justify-content: center; /* Центрування по горизонталі */
             background-color: #ffffff; /* Білий фон */
-        }
-        .button {
-            padding: 10px 20px;
-            background-color: #0088cc;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px;
-        }
-        .button:hover {
-            background-color: #0077b5;
         }
         .complaint-button {
             padding: 15px 25px;
@@ -30,7 +21,6 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            margin: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,34 +31,24 @@
             height: 35px;
             margin-right: 15px;
         }
-        .additional-buttons {
-            margin-top: 20px;
-            display: none; /* Спочатку кнопки не видно */
-        }
     </style>
 </head>
 <body>
-    <h1>Welcome to the Telegram WebApp</h1>
-    <p>This is a simple WebApp connected with Telegram.</p>
-    
     <!-- Кнопка жалоби з іконкою на російській мові -->
     <button class="complaint-button" onclick="showAdditionalButtons()">
         <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
-        Пожаловаться
+        Жалобы
     </button>
-
-    <!-- Додаткові кнопки, які з'являться після натискання -->
-    <div class="additional-buttons" id="additional-buttons">
-        <button class="button">Button 1</button>
-        <button class="button">Button 2</button>
-        <button class="button">Button 3</button>
-        <button class="button">Button 4</button>
-    </div>
-
+    
+ <!-- Кнопка жалоби з іконкою на російській мові -->
+    <button class="complaint-button" onclick="showAdditionalButtons()">
+        <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
+        Статистика
+    </button>
+    
     <script>
         function showAdditionalButtons() {
-            // Показуємо додаткові кнопки після натискання на кнопку жалоби
-            document.getElementById("additional-buttons").style.display = "block";
+            alert("Додаткові кнопки будуть додані тут!");
         }
     </script>
 </body>
