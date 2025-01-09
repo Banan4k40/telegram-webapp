@@ -42,25 +42,33 @@
         }
         .additional-buttons {
             margin-top: 20px;
+            display: none; /* Спочатку кнопки не видно */
         }
     </style>
 </head>
 <body>
     <h1>Welcome to the Telegram WebApp</h1>
     <p>This is a simple WebApp connected with Telegram.</p>
-
+    
     <!-- Кнопка жалоби з іконкою -->
-    <button class="complaint-button">
+    <button class="complaint-button" onclick="showAdditionalButtons()">
         <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
         Report a Problem
     </button>
 
-    <!-- Додаткові кнопки -->
-    <div class="additional-buttons">
+    <!-- Додаткові кнопки, які з'являться після натискання -->
+    <div class="additional-buttons" id="additional-buttons">
         <button class="button">Button 1</button>
         <button class="button">Button 2</button>
         <button class="button">Button 3</button>
         <button class="button">Button 4</button>
     </div>
+
+    <script>
+        function showAdditionalButtons() {
+            // Показуємо додаткові кнопки після натискання на кнопку жалоби
+            document.getElementById("additional-buttons").style.display = "block";
+        }
+    </script>
 </body>
 </html>
