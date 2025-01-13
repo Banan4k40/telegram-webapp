@@ -49,64 +49,95 @@
         .button:hover {
             background-color: #005f8f;
         }
+        .form-container {
+            display: none;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .form-container input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
     <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton" onclick="showComplaintButtons()">
+    <button class="complaint-button" id="complaintButton" onclick="showComplaintOptions()">
         <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
         Жалобы
     </button>
 
-    <!-- Нові кнопки "Лінія DID" і "Лінія PH" -->
-    <div id="lineButtons">
-        <button class="button" id="lineDIDButton" onclick="handleLineDID()">Лінія DID</button>
-        <button class="button" id="linePHButton" onclick="handleLinePH()">Лінія PH</button>
-    </div>
-
-    <!-- Кнопка "Статистика" -->
-    <button class="complaint-button" id="statsButton" onclick="showStatsButtons()">
-        <img src="https://img.icons8.com/ios/452/statistics.png" alt="Stats Icon" />
-        Статистика
-    </button>
-
     <!-- Додаткові кнопки для "Жалобы" -->
     <div id="complaintButtons" class="additional-buttons">
-        <button class="button">Нет дозвона</button>
-        <button class="button">Клиента плохо слишно</button>
-        <button class="button">Сервис недоступен</button>
+        <button class="button" onclick="showLineOptions()">Лінія DID</button>
+        <button class="button" onclick="showLineOptions()">Лінія PH</button>
     </div>
 
-    <!-- Додаткові кнопки для "Статистика" -->
-    <div id="statsButtons" class="additional-buttons">
-        <button class="button">За сьогодні</button>
-        <button class="button">За день</button>
-        <button class="button">За тиждень</button>
+    <!-- Форма для введення даних -->
+    <div id="formContainer" class="form-container">
+        <input type="text" id="phoneNumber" placeholder="Введіть номер телефону" />
+        <input type="text" id="callTime" placeholder="Введіть час дзвінка (HH:MM)" />
+        <textarea id="comment" placeholder="Коментар" rows="4" style="resize: none;"></textarea>
+        <button onclick="submitComplaint()">Відправити</button>
+        <button onclick="cancelComplaint()">Скасувати</button>
     </div>
 
     <script>
-        function showComplaintButtons() {
+        // Показати кнопки для "Жалобы"
+        function showComplaintOptions() {
             document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("statsButton").style.display = "none";
-            document.getElementById("lineButtons").style.display = "none";
-
             document.getElementById("complaintButtons").style.display = "block";
         }
 
-        function showStatsButtons() {
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("statsButton").style.display = "none";
-            document.getElementById("lineButtons").style.display = "none";
-
-            document.getElementById("statsButtons").style.display = "block";
+        // Показати форму для введення даних
+        function showLineOptions() {
+            document.getElementById("complaintButtons").style.display = "none";
+            document.getElementById("formContainer").style.display = "flex";
         }
 
-        function handleLineDID() {
-            alert("Лінія DID: Введення даних реалізується через Python.");
+        // Відправка даних з форми
+        function submitComplaint() {
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const callTime = document.getElementById("callTime").value;
+            const comment = document.getElementById("comment").value;
+
+            if (!phoneNumber || !callTime) {
+                alert("Будь ласка, заповніть всі поля!");
+                return;
+            }
+
+            const complaintData = {
+                phoneNumber,
+                callTime,
+                comment
+            };
+
+            alert(`Заявка відправлена:\nНомер телефону: ${complaintData.phoneNumber}\nЧас дзвінка: ${complaintData.callTime}\nКоментар: ${complaintData.comment}`);
+            
+            // Скидаємо форму
+            document.getElementById("formContainer").reset();
+            cancelComplaint();
         }
 
-        function handleLinePH() {
-            alert("Лінія PH: Введення даних реалізується через Python.");
+        // Скасувати заявку
+        function cancelComplaint() {
+            document.getElementById("formContainer").style.display = "none";
+            document.getElementById("complaintButton").style.display = "block";
         }
     </script>
 </body>
