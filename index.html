@@ -1,145 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Телефония</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: #ffffff;
+<script>
+    const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0"; // Токен вашого бота
+
+    // Обробка кнопки "Ответить"
+    async function handleAnswerButton(userId) {
+        const responseText = prompt("Введіть вашу відповідь:");
+
+        if (!responseText) {
+            alert("Текст відповіді не може бути порожнім.");
+            return;
         }
 
-        h1 {
-            font-size: 2rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    chat_id: userId,
+                    text: `Вам ответили:\n${responseText}`,
+                    parse_mode: "HTML"
+                })
+            });
 
-        .complaint-button {
-            padding: 15px 25px;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            margin: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .complaint-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .form-container {
-            display: none;
-            flex-direction: column;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            text-align: center;
-        }
-
-        .form-container input, .form-container textarea {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .form-container button {
-            padding: 10px;
-            margin-top: 10px;
-            background: linear-gradient(135deg, #43cea2, #185a9d);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .form-container button:hover {
-            background: linear-gradient(135deg, #36d1dc, #5b86e5);
-        }
-    </style>
-</head>
-<body>
-    <h1>Support Телефония</h1>
-
-    <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton">Жалобы</button>
-
-    <!-- Форма для відповіді -->
-    <div class="form-container" id="responseContainer">
-        <textarea id="responseText" placeholder="Введіть вашу відповідь" rows="4"></textarea>
-        <button id="sendResponseButton">Відправити відповідь</button>
-    </div>
-
-    <script>
-        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0";
-
-        document.getElementById('complaintButton').addEventListener('click', () => {
-            // Відкрити форму для відповіді
-            document.getElementById('responseContainer').style.display = 'flex';
-        });
-
-        document.getElementById('sendResponseButton').addEventListener('click', async () => {
-            const responseText = document.getElementById('responseText').value;
-
-            if (!responseText) {
-                alert("Введіть текст відповіді!");
-                return;
+            if (response.ok) {
+                alert("Відповідь успішно надіслана!");
+            } else {
+                alert("Помилка відправки відповіді.");
             }
+        } catch (error) {
+            console.error("Помилка при відправці відповіді:", error);
+            alert("Не вдалося надіслати відповідь.");
+        }
+    }
 
-            const chatId = prompt("Введіть ID користувача для відповіді:");
+    // Додавання кнопки "Ответить" до повідомлення
+    function createAnswerButton(userId) {
+        const button = document.createElement("button");
+        button.textContent = "Ответить";
+        button.classList.add("complaint-button");
+        button.onclick = () => handleAnswerButton(userId);
+        document.body.appendChild(button); // Додаємо кнопку в інтерфейс
+    }
 
-            if (!chatId) {
-                alert("ID користувача обов'язковий!");
-                return;
-            }
-
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: `Вам відповіли:\n${responseText}`,
-                        parse_mode: "HTML"
-                    })
-                });
-
-                if (response.ok) {
-                    alert("Відповідь успішно надіслана!");
-                    document.getElementById('responseContainer').style.display = 'none';
-                } else {
-                    alert("Помилка відправки відповіді.");
-                }
-            } catch (error) {
-                console.error("Помилка відправки:", error);
-                alert("Не вдалося надіслати відповідь.");
-            }
-        });
-    </script>
-</body>
-</html>
+    // Ініціалізація
+    document.addEventListener("DOMContentLoaded", () => {
+        // Приклад: створити кнопку "Ответить" для користувача з ID 12345
+        createAnswerButton(12345);
+    });
+</script>
