@@ -24,8 +24,35 @@
             margin-bottom: 20px;
         }
 
-        .form-container {
+        .complaint-button {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .complaint-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .complaint-button img {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .form-container {
+            display: none;
             flex-direction: column;
             background: rgba(255, 255, 255, 0.2);
             padding: 20px;
@@ -62,7 +89,15 @@
 </head>
 <body>
     <h1>Support Телефония</h1>
-    <div class="form-container">
+
+    <!-- Кнопка "Жалобы" -->
+    <button class="complaint-button" id="complaintButton" onclick="showForm()">
+        <img src="https://img.icons8.com/ios-filled/100/complaint.png" alt="Complaint Icon" />
+        Жалобы
+    </button>
+
+    <!-- Форма для введення даних -->
+    <div class="form-container" id="formContainer">
         <label for="lineType">Оберіть лінію:</label>
         <select id="lineType">
             <option value="DID">Лінія DID</option>
@@ -79,12 +114,25 @@
         <textarea id="comment" placeholder="Додайте коментар" rows="4"></textarea>
 
         <button id="submitButton">Відправити заявку</button>
+        <button onclick="cancelForm()">Скасувати</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
 
-        // Обробка кліку на кнопку "Відправити заявку"
+        // Показати форму для "Жалобы"
+        function showForm() {
+            document.getElementById("complaintButton").style.display = "none";
+            document.getElementById("formContainer").style.display = "flex";
+        }
+
+        // Скасування заявки
+        function cancelForm() {
+            document.getElementById("formContainer").style.display = "none";
+            document.getElementById("complaintButton").style.display = "flex";
+        }
+
+        // Обробка кнопки "Відправити заявку"
         document.getElementById('submitButton').addEventListener('click', () => {
             const data = {
                 lineType: document.getElementById('lineType').value,
@@ -93,14 +141,12 @@
                 comment: document.getElementById('comment').value
             };
 
-            // Перевірка валідності даних
             if (!data.phoneNumber || !data.callTime) {
                 alert("Будь ласка, заповніть усі обов'язкові поля.");
                 return;
             }
 
-            // Надсилаємо дані до Python-бота
-            tg.sendData(JSON.stringify(data));
+            tg.sendData(JSON.stringify(data)); // Надсилаємо дані до Python-бота
             alert("Заявка відправлена!");
             tg.close(); // Закриваємо WebApp
         });
