@@ -62,7 +62,7 @@
             text-align: center;
         }
 
-        .form-container input, .form-container select, .form-container textarea {
+        .form-container input, .form-container textarea {
             width: 100%;
             margin-bottom: 10px;
             padding: 10px;
@@ -144,7 +144,6 @@
             ⏰ Час дзвінка: ${callTime}
             💬 Коментар: ${comment}`;
 
-            // Вибір групи на основі лінії
             const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
             try {
@@ -156,7 +155,12 @@
                     body: JSON.stringify({
                         chat_id: groupId,
                         text: message,
-                        parse_mode: "HTML"
+                        parse_mode: "HTML",
+                        reply_markup: JSON.stringify({
+                            inline_keyboard: [[
+                                { text: "Ответить", callback_data: "reply" }
+                            ]]
+                        })
                     })
                 });
 
