@@ -111,10 +111,6 @@
         const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0"; // Токен вашого бота
         const GROUP_ID_DID = -1002424881153; // ID групи для DID
         const GROUP_ID_PH = -1002417008521; // ID групи для PH
-        const tg = window.Telegram.WebApp;
-        const userId = tg.initDataUnsafe?.user?.id || "UNKNOWN";
-        const userName = tg.initDataUnsafe?.user?.first_name || "Користувач";
-
         let selectedLine = ""; // Зберігає вибрану лінію
 
         // Показати кнопки для вибору лінії
@@ -128,7 +124,6 @@
             selectedLine = lineType;
             document.getElementById("lineButtons").style.display = "none";
             document.getElementById("formContainer").style.display = "flex";
-            console.log(`Selected line: ${lineType}`); // Для перевірки
         }
 
         // Обробка кнопки "Відправити заявку"
@@ -143,13 +138,11 @@
             }
 
             const message = `
-🆕 Нова заявка:
-📞 Лінія: ${selectedLine}
-☎️ Номер: ${phoneNumber}
-⏰ Час дзвінка: ${callTime}
-💬 Коментар: ${comment}
-👤 Відправник: ${userName} (ID: ${userId})
-`;
+            🆕 Нова заявка:
+            📞 Лінія: ${selectedLine}
+            ☎️ Номер: ${phoneNumber}
+            ⏰ Час дзвінка: ${callTime}
+            💬 Коментар: ${comment}`;
 
             const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
@@ -162,7 +155,12 @@
                     body: JSON.stringify({
                         chat_id: groupId,
                         text: message,
-                        parse_mode: "HTML"
+                        parse_mode: "HTML",
+                        reply_markup: JSON.stringify({
+                            inline_keyboard: [[
+                                { text: "Ответить", callback_data: "reply" }
+                            ]]
+                        })
                     })
                 });
 
