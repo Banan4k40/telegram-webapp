@@ -8,93 +8,98 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            height: 100vh; /* Задаємо висоту на весь екран */
+            height: 100vh; /* Вся висота екрану */
             display: flex;
-            flex-direction: column; /* Вертикальне розташування елементів */
-            align-items: center; /* Центрування по горизонталі */
-            justify-content: center; /* Центрування по вертикалі */
-            background-color: #ffffff; /* Білий фон */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f4f4f4; /* Світлий фон */
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
         }
         .complaint-button {
-            padding: 15px 25px;
-            background-color: #ff5733; /* Червоний колір для кнопки */
+            padding: 15px;
+            background-color: #0088cc;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            margin: 10px;
+            width: 150px;
+            height: 150px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
         .complaint-button img {
-            width: 35px; /* Більший розмір іконки */
-            height: 35px;
-            margin-right: 15px;
+            width: 70px;
+            height: 70px;
+            margin-bottom: 10px;
+        }
+        .complaint-button:hover {
+            background-color: #006699;
         }
         .additional-buttons {
-            display: none; /* Спочатку кнопки приховані */
+            display: none; /* Спочатку приховані */
             margin-top: 20px;
         }
         .button {
             padding: 10px 20px;
-            background-color: #0088cc;
+            background-color: #ff5733;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 5px;
-        }
-        .button:hover {
-            background-color: #005f8f;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton" onclick="showComplaintButtons()">
-        <img src="https://img.icons8.com/ios/452/complaint.png" alt="Complaint Icon" />
-        Жалобы
-    </button>
+    <div class="button-container">
+        <!-- Кнопка "Жалобы" -->
+        <button class="complaint-button" id="complaintButton" onclick="showComplaintButtons()">
+            <img src="https://img.icons8.com/ios-filled/344/complaint.png" alt="Complaint Icon" />
+            Жалобы
+        </button>
 
-    <!-- Кнопка "Статистика" -->
-    <button class="complaint-button" id="statsButton" onclick="showStatsButtons()">
-        <img src="https://img.icons8.com/ios/452/statistics.png" alt="Stats Icon" />
-        Статистика
-    </button>
+        <!-- Кнопка "Статистика" -->
+        <button class="complaint-button" id="statsButton" onclick="showStatsButtons()">
+            <img src="https://img.icons8.com/ios-filled/344/statistics.png" alt="Statistics Icon" />
+            Статистика
+        </button>
+    </div>
 
     <!-- Додаткові кнопки для "Жалобы" -->
     <div id="complaintButtons" class="additional-buttons">
         <button class="button">Нет дозвона</button>
-        <button class="button">Клиента плохо слишно</button>
+        <button class="button">Клиента плохо слышно</button>
         <button class="button">Сервис недоступен</button>
     </div>
 
     <!-- Додаткові кнопки для "Статистика" -->
     <div id="statsButtons" class="additional-buttons">
-        <button class="button">За сьогодні</button>
+        <button class="button">За сегодня</button>
         <button class="button">За день</button>
-        <button class="button">За тиждень</button>
+        <button class="button">За неделю</button>
     </div>
 
     <script>
         function showComplaintButtons() {
-            // Приховуємо кнопку "Жалобы"
             document.getElementById("complaintButton").style.display = "none";
             document.getElementById("statsButton").style.display = "none";
-
-            // Показуємо додаткові кнопки "Жалобы"
-            document.getElementById("complaintButtons").style.display = "block";
+            document.getElementById("complaintButtons").style.display = "flex";
         }
 
         function showStatsButtons() {
-            // Приховуємо кнопку "Статистика"
             document.getElementById("statsButton").style.display = "none";
             document.getElementById("complaintButton").style.display = "none";
-
-            // Показуємо додаткові кнопки "Статистика"
-            document.getElementById("statsButtons").style.display = "block";
+            document.getElementById("statsButtons").style.display = "flex";
         }
     </script>
 </body>
