@@ -180,35 +180,32 @@
             }
         });
 
-        // Обробка кнопки "Ответить"
-        async function handleAnswerButton(userId) {
-            const responseText = prompt("Введіть вашу відповідь:");
-
-            if (!responseText) {
-                alert("Текст відповіді не може бути порожнім.");
+        // Функція обробки "Ответить"
+        async function handleAnswer(userId) {
+            const reply = prompt("Введите ваш ответ:");
+            if (!reply) {
+                alert("Ви не ввели текст відповіді.");
                 return;
             }
 
             try {
                 const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         chat_id: userId,
-                        text: `Вам ответили:\n${responseText}`,
+                        text: `Відповідь на вашу заявку:\n${reply}`,
                         parse_mode: "HTML"
                     })
                 });
 
                 if (response.ok) {
-                    alert("Відповідь успішно надіслана!");
+                    alert("Відповідь успішно відправлена!");
                 } else {
-                    alert("Помилка відправки відповіді.");
+                    alert("Помилка надсилання відповіді.");
                 }
             } catch (error) {
-                console.error("Помилка при відправці відповіді:", error);
+                console.error("Помилка обробки відповіді:", error);
                 alert("Не вдалося надіслати відповідь.");
             }
         }
