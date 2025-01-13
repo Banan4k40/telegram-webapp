@@ -1,106 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Телефония</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            height: 100vh; /* Вся висота екрану */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: #f4f4f4; /* Світлий фон */
-        }
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .complaint-button {
-            padding: 15px;
-            background-color: #0088cc;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            width: 150px;
-            height: 150px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .complaint-button img {
-            width: 70px;
-            height: 70px;
-            margin-bottom: 10px;
-        }
-        .complaint-button:hover {
-            background-color: #006699;
-        }
-        .additional-buttons {
-            display: none; /* Спочатку приховані */
-            margin-top: 20px;
-        }
-        .button {
-            padding: 10px 20px;
-            background-color: #ff5733;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram WebApp</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .form-group {
+      margin: 10px 0;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
 <body>
-    <div class="button-container">
-        <!-- Кнопка "Жалобы" -->
-        <button class="complaint-button" id="complaintButton" onclick="showComplaintButtons()">
-            <img src="https://img.icons8.com/ios-filled/344/complaint.png" alt="Complaint Icon" />
-            Жалобы
-        </button>
+  <h1>Telegram WebApp</h1>
 
-        <!-- Кнопка "Статистика" -->
-        <button class="complaint-button" id="statsButton" onclick="showStatsButtons()">
-            <img src="https://img.icons8.com/ios-filled/344/statistics.png" alt="Statistics Icon" />
-            Статистика
-        </button>
+  <!-- Кнопка для відкриття жалоби -->
+  <button id="complaintButton">Подати жалобу</button>
+
+  <!-- Форма заявки -->
+  <div id="applicationForm" style="display:none;">
+    <h2>Оформити заявку</h2>
+
+    <div class="form-group">
+      <label for="lineType">Оберіть лінію:</label>
+      <select id="lineType">
+        <option value="DID">Лінія DID</option>
+        <option value="PH">Лінія PH</option>
+      </select>
     </div>
 
-    <!-- Додаткові кнопки для "Жалобы" -->
-    <div id="complaintButtons" class="additional-buttons">
-        <button class="button">Нет дозвона</button>
-        <button class="button">Клиента плохо слышно</button>
-        <button class="button">Сервис недоступен</button>
+    <div class="form-group">
+      <label for="phoneNumber">Номер телефону клієнта:</label>
+      <input type="text" id="phoneNumber" placeholder="+380123456789">
     </div>
 
-    <!-- Додаткові кнопки для "Статистика" -->
-    <div id="statsButtons" class="additional-buttons">
-        <button class="button">За сегодня</button>
-        <button class="button">За день</button>
-        <button class="button">За неделю</button>
+    <div class="form-group">
+      <label for="callTime">Час дзвінка:</label>
+      <input type="text" id="callTime" placeholder="HH:MM">
     </div>
 
-    <script>
-        function showComplaintButtons() {
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("statsButton").style.display = "none";
-            document.getElementById("complaintButtons").style.display = "flex";
-        }
+    <div class="form-group">
+      <label for="callback">Був дозвон з іншої лінії?</label>
+      <select id="callback">
+        <option value="Так">Так</option>
+        <option value="Ні">Ні</option>
+      </select>
+    </div>
 
-        function showStatsButtons() {
-            document.getElementById("statsButton").style.display = "none";
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("statsButtons").style.display = "flex";
-        }
-    </script>
+    <div class="form-group">
+      <label for="comment">Коментар:</label>
+      <input type="text" id="comment" placeholder="Введіть ваш коментар">
+    </div>
+
+    <button id="submitApplication">Відправити заявку</button>
+  </div>
+
+  <script>
+    // Підключення до Telegram WebApp
+    const tg = window.Telegram.WebApp;
+
+    // Показати форму для оформлення заявки
+    document.getElementById('complaintButton').addEventListener('click', () => {
+      document.getElementById('applicationForm').style.display = 'block';
+    });
+
+    // Обробка форми заявки
+    document.getElementById('submitApplication').addEventListener('click', () => {
+      const lineType = document.getElementById('lineType').value;
+      const phoneNumber = document.getElementById('phoneNumber').value;
+      const callTime = document.getElementById('callTime').value;
+      const callback = document.getElementById('callback').value;
+      const comment = document.getElementById('comment').value;
+
+      if (!/^\+?\d{10,15}$/.test(phoneNumber)) {
+        alert('Номер телефону некоректний!');
+        return;
+      }
+
+      if (!/^\d{1,2}:\d{2}$/.test(callTime)) {
+        alert('Час дзвінка некоректний!');
+        return;
+      }
+
+      // Відправляємо дані до Python через Telegram WebApp
+      tg.sendData(JSON.stringify({
+        action: 'submitApplication',
+        data: { lineType, phoneNumber, callTime, callback, comment }
+      }));
+
+      alert('Заявка успішно надіслана!');
+      tg.close();
+    });
+  </script>
 </body>
 </html>
