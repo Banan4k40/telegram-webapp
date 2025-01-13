@@ -45,12 +45,6 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .line-buttons {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-
         .form-container {
             display: none;
             flex-direction: column;
@@ -91,66 +85,36 @@
     <h1>Support Телефония</h1>
 
     <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
+    <button class="complaint-button" id="complaintButton">Жалобы</button>
 
-    <!-- Кнопки для вибору лінії -->
-    <div class="line-buttons" id="lineButtons">
-        <button class="complaint-button" onclick="showForm('DID')">Лінія DID</button>
-        <button class="complaint-button" onclick="showForm('PH')">Лінія PH</button>
-    </div>
-
-    <!-- Форма для введення даних -->
-    <div class="form-container" id="formContainer">
-        <input type="text" id="phoneNumber" placeholder="Введіть номер телефону" required>
-        <input type="text" id="callTime" placeholder="Введіть час дзвінка (HH:MM)" required>
-        <textarea id="comment" placeholder="Додайте коментар" rows="4"></textarea>
-        <button id="submitButton">Відправити заявку</button>
+    <!-- Форма для відповіді -->
+    <div class="form-container" id="responseContainer">
+        <textarea id="responseText" placeholder="Введіть вашу відповідь" rows="4"></textarea>
+        <button id="sendResponseButton">Відправити відповідь</button>
     </div>
 
     <script>
-        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0"; // Токен вашого бота
-        const GROUP_ID_DID = -1002424881153; // ID групи для DID
-        const GROUP_ID_PH = -1002417008521; // ID групи для PH
-        let selectedLine = ""; // Зберігає вибрану лінію
+        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0";
 
-        // Показати кнопки для вибору лінії
-        function showLineButtons() {
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("lineButtons").style.display = "flex";
-        }
+        document.getElementById('complaintButton').addEventListener('click', () => {
+            // Відкрити форму для відповіді
+            document.getElementById('responseContainer').style.display = 'flex';
+        });
 
-        // Показати форму для введення даних
-        function showForm(lineType) {
-            selectedLine = lineType;
-            document.getElementById("lineButtons").style.display = "none";
-            document.getElementById("formContainer").style.display = "flex";
-        }
+        document.getElementById('sendResponseButton').addEventListener('click', async () => {
+            const responseText = document.getElementById('responseText').value;
 
-        // Отримання User ID з Telegram WebApp
-        const tg = window.Telegram.WebApp;
-        const userId = tg.initDataUnsafe.user.id; // Отримуємо User ID користувача
-
-        // Обробка кнопки "Відправити заявку"
-        document.getElementById('submitButton').addEventListener('click', async () => {
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const callTime = document.getElementById('callTime').value;
-            const comment = document.getElementById('comment').value;
-
-            if (!phoneNumber || !callTime) {
-                alert("Будь ласка, заповніть усі обов'язкові поля.");
+            if (!responseText) {
+                alert("Введіть текст відповіді!");
                 return;
             }
 
-            const message = `
-🆕 Нова заявка:
-📞 Лінія: ${selectedLine}
-☎️ Номер: ${phoneNumber}
-⏰ Час дзвінка: ${callTime}
-💬 Коментар: ${comment}
-👤 Користувач ID: ${userId}
-`;
+            const chatId = prompt("Введіть ID користувача для відповіді:");
 
-            const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
+            if (!chatId) {
+                alert("ID користувача обов'язковий!");
+                return;
+            }
 
             try {
                 const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -159,27 +123,21 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        chat_id: groupId,
-                        text: message,
-                        parse_mode: "HTML",
-                        reply_markup: JSON.stringify({
-                            inline_keyboard: [[
-                                { text: "Ответить", callback_data: "reply" }
-                            ]]
-                        })
+                        chat_id: chatId,
+                        text: `Вам відповіли:\n${responseText}`,
+                        parse_mode: "HTML"
                     })
                 });
 
                 if (response.ok) {
-                    alert("Заявка успішно відправлена!");
-                    document.getElementById("formContainer").style.display = "none";
-                    document.getElementById("complaintButton").style.display = "flex";
+                    alert("Відповідь успішно надіслана!");
+                    document.getElementById('responseContainer').style.display = 'none';
                 } else {
-                    alert("Помилка відправки заявки.");
+                    alert("Помилка відправки відповіді.");
                 }
             } catch (error) {
                 console.error("Помилка відправки:", error);
-                alert("Не вдалося відправити заявку.");
+                alert("Не вдалося надіслати відповідь.");
             }
         });
     </script>
