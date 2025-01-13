@@ -126,6 +126,10 @@
             document.getElementById("formContainer").style.display = "flex";
         }
 
+        // Отримання User ID з Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        const userId = tg.initDataUnsafe.user.id; // Отримуємо User ID користувача
+
         // Обробка кнопки "Відправити заявку"
         document.getElementById('submitButton').addEventListener('click', async () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
@@ -138,11 +142,13 @@
             }
 
             const message = `
-            🆕 Нова заявка:
-            📞 Лінія: ${selectedLine}
-            ☎️ Номер: ${phoneNumber}
-            ⏰ Час дзвінка: ${callTime}
-            💬 Коментар: ${comment}`;
+🆕 Нова заявка:
+📞 Лінія: ${selectedLine}
+☎️ Номер: ${phoneNumber}
+⏰ Час дзвінка: ${callTime}
+💬 Коментар: ${comment}
+👤 Користувач ID: ${userId}
+`;
 
             const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
