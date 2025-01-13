@@ -19,66 +19,14 @@
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-size: 2rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .complaint-button {
-            padding: 15px 25px;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            margin: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .complaint-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .complaint-button img {
-            width: 50px;
-            height: 50px;
-            margin-right: 15px;
-        }
-
-        .additional-buttons {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .button {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #43cea2, #185a9d);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
         }
 
         .form-container {
-            display: none;
+            display: flex;
             flex-direction: column;
-            margin-top: 20px;
             background: rgba(255, 255, 255, 0.2);
             padding: 20px;
             border-radius: 10px;
@@ -87,98 +35,75 @@
             text-align: center;
         }
 
-        .form-container input, .form-container textarea {
-            padding: 10px;
-            margin: 10px 0;
+        .form-container input, .form-container select, .form-container textarea {
             width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 14px;
         }
 
         .form-container button {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #36d1dc, #5b86e5);
+            padding: 10px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .form-container button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #36d1dc, #5b86e5);
         }
     </style>
 </head>
 <body>
     <h1>Support Телефония</h1>
+    <div class="form-container">
+        <label for="lineType">Оберіть лінію:</label>
+        <select id="lineType">
+            <option value="DID">Лінія DID</option>
+            <option value="PH">Лінія PH</option>
+        </select>
 
-    <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton" onclick="showComplaintOptions()">
-        <img src="https://img.icons8.com/ios-filled/100/complaint.png" alt="Complaint Icon" />
-        Жалобы
-    </button>
+        <label for="phoneNumber">Номер телефону:</label>
+        <input type="text" id="phoneNumber" placeholder="+380123456789" required>
 
-    <!-- Додаткові кнопки для "Жалобы" -->
-    <div id="complaintButtons" class="additional-buttons">
-        <button class="button" onclick="showLineOptions()">Лінія DID</button>
-        <button class="button" onclick="showLineOptions()">Лінія PH</button>
-    </div>
+        <label for="callTime">Час дзвінка:</label>
+        <input type="text" id="callTime" placeholder="HH:MM" required>
 
-    <!-- Форма для введення даних -->
-    <div id="formContainer" class="form-container">
-        <input type="text" id="phoneNumber" placeholder="Введіть номер телефону" />
-        <input type="text" id="callTime" placeholder="Введіть час дзвінка (HH:MM)" />
-        <textarea id="comment" placeholder="Коментар" rows="4" style="resize: none;"></textarea>
-        <button onclick="submitComplaint()">Відправити</button>
-        <button onclick="cancelComplaint()">Скасувати</button>
+        <label for="comment">Коментар:</label>
+        <textarea id="comment" placeholder="Додайте коментар" rows="4"></textarea>
+
+        <button id="submitButton">Відправити заявку</button>
     </div>
 
     <script>
-        // Показати кнопки для "Жалобы"
-        function showComplaintOptions() {
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("complaintButtons").style.display = "block";
-        }
+        const tg = window.Telegram.WebApp;
 
-        // Показати форму для введення даних
-        function showLineOptions() {
-            document.getElementById("complaintButtons").style.display = "none";
-            document.getElementById("formContainer").style.display = "flex";
-        }
+        // Обробка кліку на кнопку "Відправити заявку"
+        document.getElementById('submitButton').addEventListener('click', () => {
+            const data = {
+                lineType: document.getElementById('lineType').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                callTime: document.getElementById('callTime').value,
+                comment: document.getElementById('comment').value
+            };
 
-        // Відправка даних з форми
-        function submitComplaint() {
-            const phoneNumber = document.getElementById("phoneNumber").value;
-            const callTime = document.getElementById("callTime").value;
-            const comment = document.getElementById("comment").value;
-
-            if (!phoneNumber || !callTime) {
-                alert("Будь ласка, заповніть всі поля!");
+            // Перевірка валідності даних
+            if (!data.phoneNumber || !data.callTime) {
+                alert("Будь ласка, заповніть усі обов'язкові поля.");
                 return;
             }
 
-            const complaintData = {
-                phoneNumber,
-                callTime,
-                comment
-            };
-
-            alert(`Заявка відправлена:\nНомер телефону: ${complaintData.phoneNumber}\nЧас дзвінка: ${complaintData.callTime}\nКоментар: ${complaintData.comment}`);
-            
-            // Скидаємо форму
-            document.getElementById("formContainer").reset();
-            cancelComplaint();
-        }
-
-        // Скасувати заявку
-        function cancelComplaint() {
-            document.getElementById("formContainer").style.display = "none";
-            document.getElementById("complaintButton").style.display = "block";
-        }
+            // Надсилаємо дані до Python-бота
+            tg.sendData(JSON.stringify(data));
+            alert("Заявка відправлена!");
+            tg.close(); // Закриваємо WebApp
+        });
     </script>
 </body>
 </html>
