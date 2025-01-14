@@ -62,7 +62,7 @@
             text-align: center;
         }
 
-        .form-container input, .form-container textarea {
+        .form-container input, .form-container textarea, .form-container select {
             width: 100%;
             margin-bottom: 10px;
             padding: 10px;
@@ -86,6 +86,7 @@
             background: linear-gradient(135deg, #36d1dc, #5b86e5);
         }
     </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <h1>Support Телефония</h1>
@@ -113,25 +114,26 @@
     </div>
 
     <script>
-        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0"; // Токен вашого бота
-        const GROUP_ID_DID = -1002424881153; // ID групи для DID
-        const GROUP_ID_PH = -1002417008521; // ID групи для PH
-        let selectedLine = ""; // Зберігає вибрану лінію
+        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0";
+        const GROUP_ID_DID = -1002424881153;
+        const GROUP_ID_PH = -1002417008521;
+        let selectedLine = "";
 
-        // Показати кнопки для вибору лінії
+        const tg = window.Telegram.WebApp;
+        const userName = tg.initDataUnsafe.user?.username || "Unknown";
+        const userId = tg.initDataUnsafe.user?.id || "Unknown";
+
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
             document.getElementById("lineButtons").style.display = "flex";
         }
 
-        // Показати форму для введення даних
         function showForm(lineType) {
             selectedLine = lineType;
             document.getElementById("lineButtons").style.display = "none";
             document.getElementById("formContainer").style.display = "flex";
         }
 
-        // Обробка кнопки "Відправити заявку"
         document.getElementById('submitButton').addEventListener('click', async () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
@@ -143,11 +145,8 @@
                 return;
             }
 
-            const userName = "ExampleUser"; // Замініть на реальне ім'я користувача
-            const userId = Math.floor(Math.random() * 1000000); // Сгенеруйте або отримаєте ID користувача
-
             const message = `
-            🆕 Нова заявка від користувача ${userName} (${userId}):
+            🆕 Нова заявка від користувача @${userName} (ID: ${userId}):
             Телефония: ${selectedLine}
             Номер телефона: ${phoneNumber}
             Время звонка: ${callTime}
