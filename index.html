@@ -115,20 +115,17 @@
         const userName = "ExampleUser"; // Замініть на отримання реального імені
         const userId = Math.floor(Math.random() * 1000000); // Згенеруйте або отримаєте ID користувача
 
-        // Показати кнопки для вибору лінії
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
             document.getElementById("lineButtons").style.display = "flex";
         }
 
-        // Показати форму для введення даних
         function showForm(lineType) {
             selectedLine = lineType;
             document.getElementById("lineButtons").style.display = "none";
             document.getElementById("formContainer").style.display = "flex";
         }
 
-        // Обробка кнопки "Відправити заявку"
         document.getElementById('submitButton').addEventListener('click', async () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
@@ -152,9 +149,7 @@
             try {
                 const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         chat_id: groupId,
                         text: message,
@@ -180,7 +175,6 @@
             }
         });
 
-        // Функція обробки "Ответить"
         async function handleAnswer(userId) {
             const reply = prompt("Введите ваш ответ:");
             if (!reply) {
@@ -200,7 +194,7 @@
                 });
 
                 if (response.ok) {
-                    alert("Відповідь успішно відправлена!");
+                    alert("Відповідь записана та успішно відправлена!");
                 } else {
                     alert("Помилка надсилання відповіді.");
                 }
