@@ -155,12 +155,7 @@
                     body: JSON.stringify({
                         chat_id: groupId,
                         text: message,
-                        parse_mode: "HTML",
-                        reply_markup: JSON.stringify({
-                            inline_keyboard: [[
-                                { text: "Ответить", callback_data: "reply" }
-                            ]]
-                        })
+                        parse_mode: "HTML"
                     })
                 });
 
