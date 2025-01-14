@@ -127,50 +127,55 @@
         }
 
         // Обробка кнопки "Відправити заявку"
-        document.getElementById('submitButton').addEventListener('click', async () => {
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const callTime = document.getElementById('callTime').value;
-            const comment = document.getElementById('comment').value;
+document.getElementById('submitButton').addEventListener('click', async () => {
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    const callTime = document.getElementById('callTime').value;
+    const comment = document.getElementById('comment').value;
 
-            if (!phoneNumber || !callTime) {
-                alert("Будь ласка, заповніть усі обов'язкові поля.");
-                return;
-            }
+    if (!phoneNumber || !callTime) {
+        alert("Будь ласка, заповніть усі обов'язкові поля.");
+        return;
+    }
 
-            const message = `
-            🆕 Нова заявка:
-            📞 Лінія: ${selectedLine}
-            ☎️ Номер: ${phoneNumber}
-            ⏰ Час дзвінка: ${callTime}
-            💬 Коментар: ${comment}`;
+    const message = `
+    🆕 Нова заявка:
+    📞 Лінія: ${selectedLine}
+    ☎️ Номер: ${phoneNumber}
+    ⏰ Час дзвінка: ${callTime}
+    💬 Коментар: ${comment}`;
 
-            const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
+    const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        chat_id: groupId,
-                        text: message,
-                        parse_mode: "HTML"
-                    })
-                });
-
-                if (response.ok) {
-                    alert("Заявка успішно відправлена!");
-                    document.getElementById("formContainer").style.display = "none";
-                    document.getElementById("complaintButton").style.display = "flex";
-                } else {
-                    alert("Помилка відправки заявки.");
-                }
-            } catch (error) {
-                console.error("Помилка відправки:", error);
-                alert("Не вдалося відправити заявку.");
-            }
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                chat_id: groupId,
+                text: message,
+                parse_mode: "HTML",
+                reply_markup: JSON.stringify({
+                    inline_keyboard: [[
+                        { text: "Ответить", callback_data: `answer_${phoneNumber}` }
+                    ]]
+                })
+            })
         });
+
+        if (response.ok) {
+            alert("Заявка успішно відправлена!");
+            document.getElementById("formContainer").style.display = "none";
+            document.getElementById("complaintButton").style.display = "flex";
+        } else {
+            alert("Помилка відправки заявки.");
+        }
+    } catch (error) {
+        console.error("Помилка відправки:", error);
+        alert("Не вдалося відправити заявку.");
+    }
+});
     </script>
 </body>
 </html>
