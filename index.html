@@ -90,16 +90,13 @@
 <body>
     <h1>Support Телефония</h1>
 
-    <!-- Кнопка "Жалобы" -->
     <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
 
-    <!-- Кнопки для вибору лінії -->
     <div class="line-buttons" id="lineButtons">
         <button class="complaint-button" onclick="showForm('DID')">Лінія DID</button>
         <button class="complaint-button" onclick="showForm('PH')">Лінія PH</button>
     </div>
 
-    <!-- Форма для введення даних -->
     <div class="form-container" id="formContainer">
         <input type="text" id="phoneNumber" placeholder="Введіть номер телефону" required>
         <input type="text" id="callTime" placeholder="Введіть час дзвінка (HH:MM)" required>
@@ -108,12 +105,12 @@
     </div>
 
     <script>
-        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0"; // Токен вашого бота
-        const GROUP_ID_DID = -1002424881153; // ID групи для DID
-        const GROUP_ID_PH = -1002417008521; // ID групи для PH
-        let selectedLine = ""; // Зберігає вибрану лінію
-        const userName = "ExampleUser"; // Замініть на отримання реального імені
-        const userId = Math.floor(Math.random() * 1000000); // Згенеруйте або отримаєте ID користувача
+        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0";
+        const GROUP_ID_DID = -1002424881153;
+        const GROUP_ID_PH = -1002417008521;
+        let selectedLine = "";
+        const userName = "ExampleUser"; // Реальне ім'я користувача
+        const userId = Math.floor(Math.random() * 1000000); // Унікальний ID для заявки
 
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
@@ -175,12 +172,14 @@
             }
         });
 
-        async function handleAnswer(userId) {
+        async function handleAnswer(callbackData) {
             const reply = prompt("Введите ваш ответ:");
             if (!reply) {
                 alert("Ви не ввели текст відповіді.");
                 return;
             }
+
+            const userId = callbackData.split("_")[1]; // Отримання ID користувача з callbackData
 
             try {
                 const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -194,7 +193,7 @@
                 });
 
                 if (response.ok) {
-                    alert("Відповідь записана та успішно відправлена!");
+                    alert("Відповідь успішно надіслана користувачу!");
                 } else {
                     alert("Помилка надсилання відповіді.");
                 }
