@@ -104,6 +104,11 @@
         <input type="text" id="phoneNumber" placeholder="Введіть номер телефону" required>
         <input type="text" id="callTime" placeholder="Введіть час дзвінка (HH:MM)" required>
         <textarea id="comment" placeholder="Додайте коментар" rows="4"></textarea>
+        <select id="secondLine" required>
+            <option value="">Дозвон с другой линии</option>
+            <option value="Да">Да</option>
+            <option value="Нет">Нет</option>
+        </select>
         <button id="submitButton">Відправити заявку</button>
     </div>
 
@@ -131,17 +136,23 @@
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
             const comment = document.getElementById('comment').value;
-            const userName = "UserExample"; // Замініть на реальне ім'я користувача
-            const userId = Math.floor(Math.random() * 1000000); // Сгенеруйте або отримаєте ID користувача
+            const secondLine = document.getElementById('secondLine').value;
 
-            if (!phoneNumber || !callTime || !comment) {
+            if (!phoneNumber || !callTime || !secondLine) {
                 alert("Будь ласка, заповніть усі обов'язкові поля.");
                 return;
             }
 
+            const userName = "ExampleUser"; // Замініть на реальне ім'я користувача
+            const userId = Math.floor(Math.random() * 1000000); // Сгенеруйте або отримаєте ID користувача
+
             const message = `
-            🆕 Нова заявка від користувача @${userName} (ID: ${userId}):
-            💬 Коментар: ${comment}`;
+            🆕 Нова заявка від користувача ${userName} (${userId}):
+            Телефония: ${selectedLine}
+            Номер телефона: ${phoneNumber}
+            Время звонка: ${callTime}
+            Дозвон с другой линии: ${secondLine}
+            Комментарий: ${comment}`;
 
             const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
