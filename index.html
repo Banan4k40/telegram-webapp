@@ -6,115 +6,118 @@
     <title>Support Телефония</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
             height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
             color: #ffffff;
         }
 
         h1 {
-            font-size: 2rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
         }
 
-        .complaint-button {
-            padding: 15px 25px;
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
             background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            color: white;
+            color: #fff;
             border: none;
             border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-size: 18px;
-            margin: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .complaint-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        .button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .line-buttons {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .form-container {
-            display: none;
-            flex-direction: column;
-            background: rgba(255, 255, 255, 0.2);
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background: #fff;
+            color: #000;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        .form-container input, .form-container textarea, .form-container select {
+        .modal.active {
+            display: flex;
+        }
+
+        .modal input, .modal textarea, .modal select {
             width: 100%;
-            margin-bottom: 10px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .form-container button {
-            padding: 10px;
-            margin-top: 10px;
-            background: linear-gradient(135deg, #43cea2, #185a9d);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
             font-size: 16px;
         }
 
-        .form-container button:hover {
+        .modal button {
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .modal button:hover {
             background: linear-gradient(135deg, #36d1dc, #5b86e5);
         }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <h1>Support Телефония</h1>
-
-    <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
-
-    <!-- Кнопки для вибору лінії -->
-    <div class="line-buttons" id="lineButtons">
-        <button class="complaint-button" onclick="showForm('DID')">Лінія DID</button>
-        <button class="complaint-button" onclick="showForm('PH')">Лінія PH</button>
+    <div class="container">
+        <h1>Support Телефония</h1>
+        <div class="button-container">
+            <button class="button" onclick="openModal('DID')">📞 Лінія DID</button>
+            <button class="button" onclick="openModal('PH')">📞 Лінія PH</button>
+        </div>
     </div>
 
-    <!-- Форма для введення даних -->
-    <div class="form-container" id="formContainer">
+    <!-- Модальне вікно -->
+    <div id="modal" class="modal">
+        <h2>Заповніть заявку</h2>
         <input type="text" id="phoneNumber" placeholder="Введіть номер телефону" required>
         <input type="text" id="callTime" placeholder="Введіть час дзвінка (HH:MM)" required>
         <textarea id="comment" placeholder="Додайте коментар" rows="4"></textarea>
         <select id="secondLine" required>
-            <option value="">Дозвон с другой линии</option>
-            <option value="Да">Да</option>
-            <option value="Нет">Нет</option>
+            <option value="">Дозвон з іншої лінії</option>
+            <option value="Да">Так</option>
+            <option value="Нет">Ні</option>
         </select>
-        <button id="submitButton">Відправити заявку</button>
+        <button onclick="submitRequest()">Відправити заявку</button>
     </div>
 
     <script>
-        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0";
+        const BOT_TOKEN = "Ваш_Токен";
         const GROUP_ID_DID = -1002424881153;
         const GROUP_ID_PH = -1002417008521;
         let selectedLine = "";
@@ -123,68 +126,54 @@
         const userName = tg.initDataUnsafe.user?.username || "Unknown";
         const userId = tg.initDataUnsafe.user?.id || "Unknown";
 
-        function showLineButtons() {
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("lineButtons").style.display = "flex";
-        }
-
-        function showForm(lineType) {
+        function openModal(lineType) {
             selectedLine = lineType;
-            document.getElementById("lineButtons").style.display = "none";
-            document.getElementById("formContainer").style.display = "flex";
+            document.getElementById("modal").classList.add("active");
         }
 
-        document.getElementById('submitButton').addEventListener('click', async () => {
+        async function submitRequest() {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
             const comment = document.getElementById('comment').value;
             const secondLine = document.getElementById('secondLine').value;
 
             if (!phoneNumber || !callTime || !secondLine) {
-                alert("Будь ласка, заповніть усі обов'язкові поля.");
+                alert("Будь ласка, заповніть усі поля.");
                 return;
             }
 
             const message = `
             🆕 Нова заявка від користувача @${userName} (ID: ${userId}):
-            Телефония: ${selectedLine}
-            Номер телефона: ${phoneNumber}
-            Время звонка: ${callTime}
-            Дозвон с другой линии: ${secondLine}
-            Комментарий: ${comment}`;
+            📞 Телефонія: ${selectedLine}
+            ☎️ Номер телефону: ${phoneNumber}
+            ⏰ Час дзвінка: ${callTime}
+            📲 Дозвон з іншої лінії: ${secondLine}
+            💬 Коментар: ${comment}`;
 
             const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
             try {
                 const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         chat_id: groupId,
                         text: message,
-                        parse_mode: "HTML",
-                        reply_markup: JSON.stringify({
-                            inline_keyboard: [[
-                                { text: "Ответить", callback_data: `answer_${userId}` }
-                            ]]
-                        })
+                        parse_mode: "HTML"
                     })
                 });
 
                 if (response.ok) {
                     alert("Заявка успішно відправлена!");
-                    document.getElementById("formContainer").style.display = "none";
-                    document.getElementById("complaintButton").style.display = "flex";
+                    document.getElementById("modal").classList.remove("active");
                 } else {
                     alert("Помилка відправки заявки.");
                 }
             } catch (error) {
-                console.error("Помилка відправки:", error);
+                console.error("Помилка:", error);
                 alert("Не вдалося відправити заявку.");
             }
-        });
+        }
     </script>
 </body>
 </html>
