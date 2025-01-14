@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Телефония</title>
+    <title>Поддержка Телефония</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -40,6 +40,9 @@
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .button:hover {
@@ -90,30 +93,35 @@
         .modal button:hover {
             background: linear-gradient(135deg, #36d1dc, #5b86e5);
         }
+
+        .icon {
+            font-size: 20px;
+        }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Support Телефония</h1>
+        <h1>Поддержка Телефония</h1>
         <div class="button-container">
-            <button class="button" onclick="openModal('DID')">📞 Лінія DID</button>
-            <button class="button" onclick="openModal('PH')">📞 Лінія PH</button>
+            <button class="button" onclick="showComplaints()">🛠 Жалобы</button>
+            <button class="button" onclick="openModal('DID')">📲 Линия DID</button>
+            <button class="button" onclick="openModal('PH')">📡 Линия PH</button>
         </div>
     </div>
 
-    <!-- Модальне вікно -->
+    <!-- Модальное окно -->
     <div id="modal" class="modal">
-        <h2>Заповніть заявку</h2>
-        <input type="text" id="phoneNumber" placeholder="Введіть номер телефону" required>
-        <input type="text" id="callTime" placeholder="Введіть час дзвінка (HH:MM)" required>
-        <textarea id="comment" placeholder="Додайте коментар" rows="4"></textarea>
+        <h2>Заполните заявку</h2>
+        <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
+        <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
+        <textarea id="comment" placeholder="Добавьте комментарий" rows="4"></textarea>
         <select id="secondLine" required>
-            <option value="">Дозвон з іншої лінії</option>
-            <option value="Да">Так</option>
-            <option value="Нет">Ні</option>
+            <option value="">Был ли дозвон с другой линии?</option>
+            <option value="Да">Да</option>
+            <option value="Нет">Нет</option>
         </select>
-        <button onclick="submitRequest()">Відправити заявку</button>
+        <button onclick="submitRequest()">Отправить заявку</button>
     </div>
 
     <script>
@@ -125,6 +133,10 @@
         const tg = window.Telegram.WebApp;
         const userName = tg.initDataUnsafe.user?.username || "Unknown";
         const userId = tg.initDataUnsafe.user?.id || "Unknown";
+
+        function showComplaints() {
+            alert("Раздел жалоб находится в разработке.");
+        }
 
         function openModal(lineType) {
             selectedLine = lineType;
@@ -138,17 +150,17 @@
             const secondLine = document.getElementById('secondLine').value;
 
             if (!phoneNumber || !callTime || !secondLine) {
-                alert("Будь ласка, заповніть усі поля.");
+                alert("Пожалуйста, заполните все поля.");
                 return;
             }
 
             const message = `
-            🆕 Нова заявка від користувача @${userName} (ID: ${userId}):
-            📞 Телефонія: ${selectedLine}
-            ☎️ Номер телефону: ${phoneNumber}
-            ⏰ Час дзвінка: ${callTime}
-            📲 Дозвон з іншої лінії: ${secondLine}
-            💬 Коментар: ${comment}`;
+            🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
+            📞 Телефония: ${selectedLine}
+            ☎️ Номер телефона: ${phoneNumber}
+            ⏰ Время звонка: ${callTime}
+            📲 Дозвон с другой линии: ${secondLine}
+            💬 Комментарий: ${comment}`;
 
             const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
@@ -164,14 +176,14 @@
                 });
 
                 if (response.ok) {
-                    alert("Заявка успішно відправлена!");
+                    alert("Заявка успешно отправлена!");
                     document.getElementById("modal").classList.remove("active");
                 } else {
-                    alert("Помилка відправки заявки.");
+                    alert("Ошибка отправки заявки.");
                 }
             } catch (error) {
-                console.error("Помилка:", error);
-                alert("Не вдалося відправити заявку.");
+                console.error("Ошибка:", error);
+                alert("Не удалось отправить заявку.");
             }
         }
     </script>
