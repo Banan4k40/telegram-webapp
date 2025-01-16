@@ -137,7 +137,7 @@
         document.getElementById('submitButton').addEventListener('click', async () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
-            const comment = document.getElementById('comment').value;
+            const comment = document.getElementById('comment').value || "";
             const secondLine = document.getElementById('secondLine').value;
 
             if (!phoneNumber || !callTime || !secondLine) {
@@ -145,13 +145,15 @@
                 return;
             }
 
+            const updatedComment = comment.trim() + " @DID_Global_bot";
+
             const message = `
             🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
             📞 Линия: ${selectedLine}
             ☎️ Номер телефона: ${phoneNumber}
             ⏰ Время звонка: ${callTime}
             📲 Дозвон с другой линии: ${secondLine}
-            💬 Комментарий: ${comment}`;
+            💬 Комментарий: ${updatedComment}`;
 
             const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
