@@ -120,6 +120,7 @@
         let selectedLine = "";
 
         const tg = window.Telegram.WebApp;
+        tg.ready(); // Инициализация Telegram WebApp API
         const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
         const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
 
@@ -179,9 +180,7 @@
                 });
 
                 if (response.ok) {
-                    alert("Заявка успешно отправлена!");
-                    document.getElementById("formContainer").style.display = "none";
-                    document.getElementById("complaintButton").style.display = "flex";
+                    tg.close(); // Закрыть WebApp после успешной отправки
                 } else {
                     alert("Ошибка отправки заявки.");
                 }
