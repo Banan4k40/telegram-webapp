@@ -122,23 +122,6 @@
         const userName = tg.initDataUnsafe.user?.username || "Unknown";
         const userId = tg.initDataUnsafe.user?.id || "Unknown";
 
-        // Функція для отримання параметрів URL
-        function getQueryParams() {
-            const params = {};
-            const queryString = window.location.search.substring(1);
-            const pairs = queryString.split("&");
-            for (let i = 0; i < pairs.length; i++) {
-                const pair = pairs[i].split("=");
-                params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
-            }
-            return params;
-        }
-
-        // Отримання group_id з URL
-        const params = getQueryParams();
-        const GROUP_ID_DID = params['group_id_did'];
-        const GROUP_ID_PH = params['group_id_ph'];
-
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
             document.getElementById("lineButtons").style.display = "flex";
@@ -161,41 +144,24 @@
                 return;
             }
 
-            // Формування повідомлення
-            const message = `
-🆕 Нова заявка від користувача @${userName} (ID: ${userId}):
-Телефония: ${selectedLine}
-Номер телефона: ${phoneNumber}
-Время звонка: ${callTime}
-Дозвон с другой линии: ${secondLine}
-Комментарий: ${comment}`;
+            // Формування даних для відправки
+            const payload = {
+                phoneNumber,
+                callTime,
+                comment,
+                secondLine,
+                selectedLine,
+                userName,
+                userId
+            };
 
-            // Вибір group_id на основі обраної лінії
-            const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
+            // Надсилання даних до бота через Telegram WebApp API
+            tg.sendData(JSON.stringify(payload));
+        });
 
-            // Надсилання повідомлення через Telegram API
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        chat_id: groupId,
-                        text: message,
-                        parse_mode: "HTML"
-                    })
-                });
-
-                if (response.ok) {
-                    tg.close(); // Закриває WebApp після успішної відправки
-                } else {
-                    alert("Помилка відправки заявки.");
-                }
-            } catch (error) {
-                console.error("Помилка відправки:", error);
-                alert("Не вдалося відправити заявку.");
-            }
+        // Закриття WebApp після надсилання даних
+        tg.onEvent('mainButtonClicked', function() {
+            tg.close();
         });
     </script>
 </body>
