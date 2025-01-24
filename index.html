@@ -62,7 +62,7 @@
             text-align: center;
         }
 
-        .form-container input, .form-container textarea {
+        .form-container input, .form-container textarea, .form-container select {
             width: 100%;
             margin-bottom: 10px;
             padding: 10px;
@@ -105,13 +105,29 @@
         <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
         <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
         <textarea id="comment" placeholder="Добавьте комментарий" rows="4"></textarea>
+        <select id="secondLine" required>
+            <option value="">Был дозвон с другой линии?</option>
+            <option value="Да">Да</option>
+            <option value="Нет">Нет</option>
+        </select>
         <button id="submitButton">Отправить заявку</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready();
+        tg.ready(); // Инициализация Telegram WebApp API
+
+        const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
+        const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
         let selectedLine = "";
+        let groupId = ""; // Динамически заполняется через initDataUnsafe
+
+        try {
+            const initData = JSON.parse(tg.initDataUnsafe.data);
+            groupId = initData.groupId; // Получаем groupId из Python
+        } catch (e) {
+            console.error("Ошибка получения данных из initDataUnsafe", e);
+        }
 
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
@@ -124,25 +140,40 @@
             document.getElementById("formContainer").style.display = "flex";
         }
 
-        document.getElementById('submitButton').addEventListener('click', () => {
+        document.getElementById('submitButton').addEventListener('click', async () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
-            const comment = document.getElementById('comment').value;
+            const comment = document.getElementById('comment').value || "";
+            const secondLine = document.getElementById('secondLine').value;
 
-            if (!phoneNumber || !callTime) {
-                alert("Заполните все обязательные поля.");
+            if (!phoneNumber || !callTime || !secondLine) {
+                alert("Пожалуйста, заполните все обязательные поля.");
                 return;
             }
 
-            const data = {
-                line_type: selectedLine,
-                phone_number: phoneNumber,
-                call_time: callTime,
-                comment: comment || ""
-            };
+            const message = `
+            🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
+            📞 Линия: ${selectedLine}
+            ☎️ Номер телефона: ${phoneNumber}
+            ⏰ Время звонка: ${callTime}
+            📲 Дозвон с другой линии: ${secondLine}
+            💬 Комментарий: ${comment}`;
 
-            tg.sendData(JSON.stringify(data));
-            tg.close(); // Закрывает WebApp после отправки
+            try {
+                await fetch(`https://api.telegram.org/bot${tg.initDataUnsafe.query_id}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        chat_id: groupId,
+                        text: message,
+                        parse_mode: "HTML"
+                    })
+                });
+                tg.close(); // Закрыть WebApp после успешной отправки
+            } catch (error) {
+                console.error("Ошибка отправки заявки:", error);
+                alert("Ошибка отправки заявки.");
+            }
         });
     </script>
 </body>
