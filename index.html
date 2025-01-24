@@ -114,15 +114,11 @@
     </div>
 
     <script>
-        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0";
-        const GROUP_ID_DID = -1002424881153;
-        const GROUP_ID_PH = -1002417008521;
-        let selectedLine = "";
-
         const tg = window.Telegram.WebApp;
         tg.ready(); // Инициализация Telegram WebApp API
         const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
         const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
+        let selectedLine = "";
 
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
@@ -146,37 +142,22 @@
                 return;
             }
 
-            // Добавляем @DID_Global_bot, только если выбрана Линия DID
-            if (selectedLine === "DID") {
-                comment = comment.trim() + " @DID_Global_bot";
-            }
-
-            const message = `
-            🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
-            📞 Линия: ${selectedLine}
-            ☎️ Номер телефона: ${phoneNumber}
-            ⏰ Время звонка: ${callTime}
-            📲 Дозвон с другой линии: ${secondLine}
-            💬 Комментарий: ${comment}`;
-
-            const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
+            // Формируем данные для отправки
+            const payload = {
+                line_type: selectedLine,
+                phone_number: phoneNumber,
+                call_time: callTime,
+                comment: comment,
+                second_line: secondLine,
+                username: userName,
+                user_id: userId
+            };
 
             try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                const response = await fetch(`/submit-request`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        chat_id: groupId,
-                        text: message,
-                        parse_mode: "HTML",
-                        reply_markup: JSON.stringify({
-                            inline_keyboard: [[
-                                { text: "Ответить", callback_data: `answer_${userId}` }
-                            ]]
-                        })
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
                 });
 
                 if (response.ok) {
