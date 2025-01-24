@@ -135,13 +135,18 @@
 
         // Обробка події надсилання даних
         document.getElementById('submitButton').addEventListener('click', () => {
+            console.log("Submit button clicked"); // Додано логування
+
             const phoneNumber = document.getElementById('phoneNumber').value.trim();
             const callTime = document.getElementById('callTime').value.trim();
             const comment = document.getElementById('comment').value.trim();
             const secondLine = document.getElementById('secondLine').value.trim();
 
+            console.log("Form data:", { phoneNumber, callTime, comment, secondLine, selectedLine }); // Логування даних форми
+
             if (!phoneNumber || !callTime || !secondLine || !selectedLine) {
                 alert("Будь ласка, заповніть усі обов'язкові поля.");
+                console.log("Validation failed: Not all required fields are filled"); // Логування валідації
                 return;
             }
 
@@ -156,12 +161,20 @@
                 userId
             };
 
+            console.log("Payload to send:", payload); // Логування payload
+
             // Надсилання даних до бота через Telegram WebApp API
-            tg.sendData(JSON.stringify(payload));
+            try {
+                tg.sendData(JSON.stringify(payload));
+                console.log("tg.sendData called successfully"); // Логування успішного виклику
+            } catch (error) {
+                console.error("Error calling tg.sendData:", error); // Логування помилки
+            }
         });
 
         // Закриття WebApp після надсилання даних
         tg.onEvent('mainButtonClicked', function() {
+            console.log("Main button clicked, closing WebApp"); // Логування події
             tg.close();
         });
     </script>
