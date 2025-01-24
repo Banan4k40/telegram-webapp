@@ -133,7 +133,8 @@
             document.getElementById("formContainer").style.display = "flex";
         }
 
-        document.getElementById('submitButton').addEventListener('click', async () => {
+        // Обробка події надсилання даних
+        document.getElementById('submitButton').addEventListener('click', () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
             const comment = document.getElementById('comment').value;
