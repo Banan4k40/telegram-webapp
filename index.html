@@ -5,20 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support Телефония</title>
     <style>
-        /* CSS (залишився таким, як і в оригіналі) */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #ffffff;
+        }
+
+        h1 {
+            font-size: 2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .complaint-button {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .complaint-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .line-buttons {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container {
+            display: none;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        .form-container input, .form-container textarea, .form-container select {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-container button {
+            padding: 10px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-container button:hover {
+            background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <h1>Поддержка Телефонии</h1>
-    <!-- Кнопки -->
+
+    <!-- Кнопка "Жалобы" -->
     <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
+
+    <!-- Кнопки для выбора линии -->
     <div class="line-buttons" id="lineButtons">
         <button class="complaint-button" onclick="showForm('DID')">Линия DID</button>
         <button class="complaint-button" onclick="showForm('PH')">Линия PH</button>
     </div>
 
-    <!-- Форма -->
+    <!-- Форма для ввода данных -->
     <div class="form-container" id="formContainer">
         <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
         <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
@@ -33,11 +115,12 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready();
+        tg.ready(); // Инициализация Telegram WebApp API
 
-        // Отримуємо initDataUnsafe
-        const initData = JSON.parse(new URLSearchParams(window.location.search).get("data") || "{}");
-        const groupIds = initData || {};
+        const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
+        const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
+        const groupIds = tg.initDataUnsafe.user?.group_ids || {};
+
         let selectedLine = "";
 
         function showLineButtons() {
@@ -62,18 +145,18 @@
                 return;
             }
 
+            const groupId = selectedLine === "DID" ? groupIds.DID : groupIds.PH;
+
             const message = `
-            🆕 Новая заявка от пользователя @${tg.initDataUnsafe.user?.username || "Неизвестно"}:
+            🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
             📞 Линия: ${selectedLine}
             ☎️ Номер телефона: ${phoneNumber}
             ⏰ Время звонка: ${callTime}
             📲 Дозвон с другой линии: ${secondLine}
             💬 Комментарий: ${comment}`;
 
-            const groupId = groupIds[selectedLine];
-
             try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                const response = await fetch(`https://api.telegram.org/bot${tg.initDataUnsafe.token}/sendMessage`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
