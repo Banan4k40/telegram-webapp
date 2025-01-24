@@ -115,10 +115,29 @@
     </div>
 
     <script>
+        let selectedLine = "";
+
         const tg = window.Telegram.WebApp;
         tg.ready(); // Ініціалізація Telegram WebApp API
         const userName = tg.initDataUnsafe.user?.username || "Unknown";
         const userId = tg.initDataUnsafe.user?.id || "Unknown";
+
+        // Функція для отримання параметрів URL
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split("&");
+            for (let i = 0; i < pairs.length; i++) {
+                const pair = pairs[i].split("=");
+                params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+            }
+            return params;
+        }
+
+        // Отримання group_id з URL
+        const params = getQueryParams();
+        const GROUP_ID_DID = params['group_id_did'];
+        const GROUP_ID_PH = params['group_id_ph'];
 
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
@@ -136,38 +155,42 @@
             const callTime = document.getElementById('callTime').value;
             const comment = document.getElementById('comment').value;
             const secondLine = document.getElementById('secondLine').value;
-            const selectedLine = window.selectedLine; // Отримуємо обрану лінію
 
             if (!phoneNumber || !callTime || !secondLine || !selectedLine) {
                 alert("Будь ласка, заповніть усі обов'язкові поля.");
                 return;
             }
 
-            const payload = {
-                phoneNumber,
-                callTime,
-                comment,
-                secondLine,
-                selectedLine,
-                userName,
-                userId
-            };
+            // Формування повідомлення
+            const message = `
+🆕 Нова заявка від користувача @${userName} (ID: ${userId}):
+Телефония: ${selectedLine}
+Номер телефона: ${phoneNumber}
+Время звонка: ${callTime}
+Дозвон с другой линии: ${secondLine}
+Комментарий: ${comment}`;
 
+            // Вибір group_id на основі обраної лінії
+            const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
+
+            // Надсилання повідомлення через Telegram API
             try {
-                const response = await fetch('/submit', {
-                    method: 'POST',
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json'
+                        "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        chat_id: groupId,
+                        text: message,
+                        parse_mode: "HTML"
+                    })
                 });
 
-                const result = await response.json();
-
-                if (result.status === 'success') {
+                if (response.ok) {
                     tg.close(); // Закриває WebApp після успішної відправки
                 } else {
-                    alert(result.message || "Помилка відправки заявки.");
+                    alert("Помилка відправки заявки.");
                 }
             } catch (error) {
                 console.error("Помилка відправки:", error);
