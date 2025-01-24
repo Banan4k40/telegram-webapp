@@ -45,8 +45,14 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
 
+        .line-buttons {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .form-container {
-            display: flex;
+            display: none;
             flex-direction: column;
             background: rgba(255, 255, 255, 0.2);
             padding: 20px;
@@ -84,7 +90,18 @@
 </head>
 <body>
     <h1>Поддержка Телефонии</h1>
-    <div class="form-container">
+
+    <!-- Кнопка "Жалобы" -->
+    <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
+
+    <!-- Кнопки для выбора линии -->
+    <div class="line-buttons" id="lineButtons">
+        <button class="complaint-button" onclick="showForm('DID')">Линия DID</button>
+        <button class="complaint-button" onclick="showForm('PH')">Линия PH</button>
+    </div>
+
+    <!-- Форма для ввода данных -->
+    <div class="form-container" id="formContainer">
         <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
         <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
         <textarea id="comment" placeholder="Добавьте комментарий" rows="4"></textarea>
@@ -93,7 +110,19 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready(); // Инициализация Telegram WebApp API
+        tg.ready();
+        let selectedLine = "";
+
+        function showLineButtons() {
+            document.getElementById("complaintButton").style.display = "none";
+            document.getElementById("lineButtons").style.display = "flex";
+        }
+
+        function showForm(lineType) {
+            selectedLine = lineType;
+            document.getElementById("lineButtons").style.display = "none";
+            document.getElementById("formContainer").style.display = "flex";
+        }
 
         document.getElementById('submitButton').addEventListener('click', () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
@@ -106,16 +135,14 @@
             }
 
             const data = {
+                line_type: selectedLine,
                 phone_number: phoneNumber,
                 call_time: callTime,
-                comment: comment || "",
-                line_type: "DID" // Пример типа линии
+                comment: comment || ""
             };
 
-            console.log("Отправляем данные:", data); // Логируем отправляемые данные
-
-            tg.sendData(JSON.stringify(data)); // Отправляем данные
-            tg.close(); // Закрываем WebApp
+            tg.sendData(JSON.stringify(data));
+            tg.close(); // Закрывает WebApp после отправки
         });
     </script>
 </body>
