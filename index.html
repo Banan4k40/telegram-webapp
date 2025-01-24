@@ -1,181 +1,96 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Телефония</title>
+    <title>Telegram WebApp</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Ваші CSS стилі залишаються без змін */
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: #ffffff;
+            margin: 0;
+            background-color: #f0f0f0;
         }
-
-        h1 {
-            font-size: 2rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
-
-        .complaint-button {
-            padding: 15px 25px;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            margin: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .complaint-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .line-buttons {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .form-container {
-            display: none;
-            flex-direction: column;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            text-align: center;
-        }
-
-        .form-container input, .form-container textarea, .form-container select {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .form-container button {
-            padding: 10px;
-            margin-top: 10px;
-            background: linear-gradient(135deg, #43cea2, #185a9d);
+        button {
+            padding: 10px 20px;
+            background-color: #0078D7;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
         }
-
-        .form-container button:hover {
-            background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        button:hover {
+            background-color: #005fa3;
         }
     </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <h1>Support Телефония</h1>
-
-    <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
-
-    <!-- Кнопки для вибору лінії -->
-    <div class="line-buttons" id="lineButtons">
-        <button class="complaint-button" onclick="showForm('DID')">Лінія DID</button>
-        <button class="complaint-button" onclick="showForm('PH')">Лінія PH</button>
-    </div>
-
-    <!-- Форма для введення даних -->
-    <div class="form-container" id="formContainer">
-        <input type="text" id="phoneNumber" placeholder="Введіть номер телефону" required>
-        <input type="text" id="callTime" placeholder="Введіть час дзвінка (HH:MM)" required>
-        <textarea id="comment" placeholder="Додайте коментар" rows="4"></textarea>
-        <select id="secondLine" required>
-            <option value="">Дозвон с другой линии</option>
-            <option value="Да">Да</option>
-            <option value="Нет">Нет</option>
-        </select>
-        <button id="submitButton">Відправити заявку</button>
-    </div>
+    <h1>Telegram WebApp</h1>
+    <p>Натисніть кнопку для відправки заявки.</p>
+    <input type="text" id="phoneNumber" placeholder="Введіть номер телефону">
+    <input type="text" id="callTime" placeholder="Введіть час дзвінка">
+    <textarea id="comment" placeholder="Ваш коментар" rows="4"></textarea>
+    <button id="submitButton">Відправити</button>
 
     <script>
-        let selectedLine = "";
-
+        // Ініціалізація Telegram WebApp API
         const tg = window.Telegram.WebApp;
-        tg.ready(); // Ініціалізація Telegram WebApp API
-        const userName = tg.initDataUnsafe.user?.username || "Unknown";
-        const userId = tg.initDataUnsafe.user?.id || "Unknown";
+        tg.ready();
 
-        function showLineButtons() {
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("lineButtons").style.display = "flex";
-        }
+        // Отримання даних від бота
+        const initData = tg.initDataUnsafe;
+        const botToken = initData.query_id || "Токен бота не передано"; // Або передати вручну
+        const groupId = initData.group_id || -100; // Отримати GROUP_ID
 
-        function showForm(lineType) {
-            selectedLine = lineType;
-            document.getElementById("lineButtons").style.display = "none";
-            document.getElementById("formContainer").style.display = "flex";
-        }
+        // Обробка кнопки
+        document.getElementById('submitButton').addEventListener('click', async () => {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const callTime = document.getElementById('callTime').value;
+            const comment = document.getElementById('comment').value;
 
-        // Обробка події надсилання даних
-        document.getElementById('submitButton').addEventListener('click', () => {
-            console.log("Submit button clicked"); // Додано логування
-
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const callTime = document.getElementById('callTime').value.trim();
-            const comment = document.getElementById('comment').value.trim();
-            const secondLine = document.getElementById('secondLine').value.trim();
-
-            console.log("Form data:", { phoneNumber, callTime, comment, secondLine, selectedLine }); // Логування даних форми
-
-            if (!phoneNumber || !callTime || !secondLine || !selectedLine) {
-                alert("Будь ласка, заповніть усі обов'язкові поля.");
-                console.log("Validation failed: Not all required fields are filled"); // Логування валідації
+            if (!phoneNumber || !callTime) {
+                alert("Будь ласка, заповніть усі поля.");
                 return;
             }
 
-            // Формування даних для відправки
-            const payload = {
-                phoneNumber,
-                callTime,
-                comment,
-                secondLine,
-                selectedLine,
-                userName,
-                userId
-            };
+            // Формуємо текст повідомлення
+            const message = `
+                🆕 Нове звернення:
+                ☎️ Номер: ${phoneNumber}
+                ⏰ Час дзвінка: ${callTime}
+                💬 Коментар: ${comment}
+            `;
 
-            console.log("Payload to send:", payload); // Логування payload
-
-            // Надсилання даних до бота через Telegram WebApp API
+            // Відправка через Telegram Bot API
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
             try {
-                tg.sendData(JSON.stringify(payload));
-                console.log("tg.sendData called successfully"); // Логування успішного виклику
-            } catch (error) {
-                console.error("Error calling tg.sendData:", error); // Логування помилки
-            }
-        });
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: groupId,
+                        text: message,
+                    }),
+                });
 
-        // Закриття WebApp після надсилання даних
-        tg.onEvent('mainButtonClicked', function() {
-            console.log("Main button clicked, closing WebApp"); // Логування події
-            tg.close();
+                if (response.ok) {
+                    alert("Заявку відправлено успішно!");
+                    tg.close(); // Закриваємо WebApp
+                } else {
+                    alert("Помилка відправки заявки.");
+                }
+            } catch (error) {
+                console.error("Помилка:", error);
+                alert("Не вдалося відправити заявку.");
+            }
         });
     </script>
 </body>
