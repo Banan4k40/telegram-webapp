@@ -91,16 +91,13 @@
 <body>
     <h1>Поддержка Телефонии</h1>
 
-    <!-- Кнопка "Жалобы" -->
     <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
 
-    <!-- Кнопки для выбора линии -->
     <div class="line-buttons" id="lineButtons">
         <button class="complaint-button" onclick="showForm('DID')">Линия DID</button>
         <button class="complaint-button" onclick="showForm('PH')">Линия PH</button>
     </div>
 
-    <!-- Форма для ввода данных -->
     <div class="form-container" id="formContainer">
         <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
         <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
@@ -115,13 +112,9 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready(); // Инициализация Telegram WebApp API
+        tg.ready();
 
-        const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
-        const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
-        const groupIds = tg.initDataUnsafe.user?.group_ids || {};
-
-        let selectedLine = "";
+        const groupIds = JSON.parse(tg.initDataUnsafe.group_ids || '{}');
 
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
@@ -137,7 +130,7 @@
         document.getElementById('submitButton').addEventListener('click', async () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
-            const comment = document.getElementById('comment').value || "";
+            const comment = document.getElementById('comment').value;
             const secondLine = document.getElementById('secondLine').value;
 
             if (!phoneNumber || !callTime || !secondLine) {
@@ -145,31 +138,32 @@
                 return;
             }
 
-            const groupId = selectedLine === "DID" ? groupIds.DID : groupIds.PH;
+            const groupId = groupIds[selectedLine];
 
-            const message = `
-            🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
-            📞 Линия: ${selectedLine}
-            ☎️ Номер телефона: ${phoneNumber}
-            ⏰ Время звонка: ${callTime}
-            📲 Дозвон с другой линии: ${secondLine}
-            💬 Комментарий: ${comment}`;
+            if (!groupId) {
+                alert("Ошибка: Неверный тип линии.");
+                return;
+            }
+
+            const message = `\uD83D\uDD95 Новая заявка от пользователя @${tg.initDataUnsafe.user?.username || 'Неизвестно'}:
+\uD83D\uDCDE Линия: ${selectedLine}
+\u260E Номер телефона: ${phoneNumber}
+\u23F0 Время звонка: ${callTime}
+\uD83D\uDCE2 Комментарий: ${comment}`;
 
             try {
-                const response = await fetch(`https://api.telegram.org/bot${tg.initDataUnsafe.token}/sendMessage`, {
+                const response = await fetch(`https://api.telegram.org/bot${tg.initDataUnsafe.bot_token}/sendMessage`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         chat_id: groupId,
                         text: message,
-                        parse_mode: "HTML"
+                        parse_mode: "HTML",
                     })
                 });
 
                 if (response.ok) {
-                    tg.close(); // Закрыть WebApp после успешной отправки
+                    tg.close();
                 } else {
                     alert("Ошибка отправки заявки.");
                 }
