@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поддержка Телефонии</title>
+    <title>Support Телефония</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -45,14 +45,8 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .line-buttons {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-
         .form-container {
-            display: none;
+            display: flex;
             flex-direction: column;
             background: rgba(255, 255, 255, 0.2);
             padding: 20px;
@@ -62,7 +56,7 @@
             text-align: center;
         }
 
-        .form-container input, .form-container textarea, .form-container select {
+        .form-container input, .form-container textarea {
             width: 100%;
             margin-bottom: 10px;
             padding: 10px;
@@ -90,66 +84,38 @@
 </head>
 <body>
     <h1>Поддержка Телефонии</h1>
-
-    <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
-
-    <!-- Кнопки для выбора линии -->
-    <div class="line-buttons" id="lineButtons">
-        <button class="complaint-button" onclick="showForm('DID')">Линия DID</button>
-        <button class="complaint-button" onclick="showForm('PH')">Линия PH</button>
-    </div>
-
-    <!-- Форма для ввода данных -->
-    <div class="form-container" id="formContainer">
+    <div class="form-container">
         <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
         <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
         <textarea id="comment" placeholder="Добавьте комментарий" rows="4"></textarea>
-        <select id="secondLine" required>
-            <option value="">Был дозвон с другой линии?</option>
-            <option value="Да">Да</option>
-            <option value="Нет">Нет</option>
-        </select>
         <button id="submitButton">Отправить заявку</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready();
-
-        let selectedLine = "";
-
-        function showLineButtons() {
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("lineButtons").style.display = "flex";
-        }
-
-        function showForm(lineType) {
-            selectedLine = lineType;
-            document.getElementById("lineButtons").style.display = "none";
-            document.getElementById("formContainer").style.display = "flex";
-        }
+        tg.ready(); // Инициализация Telegram WebApp API
 
         document.getElementById('submitButton').addEventListener('click', () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
             const comment = document.getElementById('comment').value;
-            const secondLine = document.getElementById('secondLine').value;
 
-            if (!phoneNumber || !callTime || !secondLine) {
-                alert("Пожалуйста, заполните все обязательные поля.");
+            if (!phoneNumber || !callTime) {
+                alert("Заполните все обязательные поля.");
                 return;
             }
 
             const data = {
-                line_type: selectedLine,
                 phone_number: phoneNumber,
                 call_time: callTime,
-                comment: comment
+                comment: comment || "",
+                line_type: "DID" // Пример типа линии
             };
 
-            tg.sendData(JSON.stringify(data)); // Отправка данных в бот
-            tg.close(); // Закрыть WebApp
+            console.log("Отправляем данные:", data); // Логируем отправляемые данные
+
+            tg.sendData(JSON.stringify(data)); // Отправляем данные
+            tg.close(); // Закрываем WebApp
         });
     </script>
 </body>
