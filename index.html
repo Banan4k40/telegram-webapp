@@ -135,10 +135,10 @@
 
         // Обробка події надсилання даних
         document.getElementById('submitButton').addEventListener('click', () => {
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const callTime = document.getElementById('callTime').value;
-            const comment = document.getElementById('comment').value;
-            const secondLine = document.getElementById('secondLine').value;
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const callTime = document.getElementById('callTime').value.trim();
+            const comment = document.getElementById('comment').value.trim();
+            const secondLine = document.getElementById('secondLine').value.trim();
 
             if (!phoneNumber || !callTime || !secondLine || !selectedLine) {
                 alert("Будь ласка, заповніть усі обов'язкові поля.");
