@@ -45,6 +45,12 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
 
+        .line-buttons {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .form-container {
             display: none;
             flex-direction: column;
@@ -85,9 +91,16 @@
 <body>
     <h1>Поддержка Телефонии</h1>
 
-    <button class="complaint-button" onclick="showForm('DID')">Линия DID</button>
-    <button class="complaint-button" onclick="showForm('PH')">Линия PH</button>
+    <!-- Кнопка "Жалобы" -->
+    <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
 
+    <!-- Кнопки для выбора линии -->
+    <div class="line-buttons" id="lineButtons">
+        <button class="complaint-button" onclick="showForm('DID')">Линия DID</button>
+        <button class="complaint-button" onclick="showForm('PH')">Линия PH</button>
+    </div>
+
+    <!-- Форма для ввода данных -->
     <div class="form-container" id="formContainer">
         <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
         <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
@@ -107,19 +120,25 @@
         let selectedLine = "";
 
         const tg = window.Telegram.WebApp;
-        tg.ready();
+        tg.ready(); // Инициализация Telegram WebApp API
         const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
         const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
 
+        function showLineButtons() {
+            document.getElementById("complaintButton").style.display = "none";
+            document.getElementById("lineButtons").style.display = "flex";
+        }
+
         function showForm(lineType) {
             selectedLine = lineType;
+            document.getElementById("lineButtons").style.display = "none";
             document.getElementById("formContainer").style.display = "flex";
         }
 
         document.getElementById('submitButton').addEventListener('click', async () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
-            const comment = document.getElementById('comment').value;
+            let comment = document.getElementById('comment').value || "";
             const secondLine = document.getElementById('secondLine').value;
 
             if (!phoneNumber || !callTime || !secondLine) {
@@ -127,13 +146,18 @@
                 return;
             }
 
+            // Добавляем @DID_Global_bot, только если выбрана Линия DID
+            if (selectedLine === "DID") {
+                comment = comment.trim() + " @DID_Global_bot";
+            }
+
             const message = `
-                🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
-                📞 Линия: ${selectedLine}
-                ☎️ Номер телефона: ${phoneNumber}
-                ⏰ Время звонка: ${callTime}
-                📲 Дозвон с другой линии: ${secondLine}
-                💬 Комментарий: ${comment}`;
+            🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
+            📞 Линия: ${selectedLine}
+            ☎️ Номер телефона: ${phoneNumber}
+            ⏰ Время звонка: ${callTime}
+            📲 Дозвон с другой линии: ${secondLine}
+            💬 Комментарий: ${comment}`;
 
             const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
@@ -146,12 +170,17 @@
                     body: JSON.stringify({
                         chat_id: groupId,
                         text: message,
-                        parse_mode: "HTML"
+                        parse_mode: "HTML",
+                        reply_markup: JSON.stringify({
+                            inline_keyboard: [[
+                                { text: "Ответить", callback_data: `answer_${userId}` }
+                            ]]
+                        })
                     })
                 });
 
                 if (response.ok) {
-                    tg.close();
+                    tg.close(); // Закрыть WebApp после успешной отправки
                 } else {
                     alert("Ошибка отправки заявки.");
                 }
