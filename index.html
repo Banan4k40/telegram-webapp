@@ -114,82 +114,94 @@
     </div>
 
     <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const GROUP_ID_DID = urlParams.get("did");
-    const GROUP_ID_PH = urlParams.get("ph");
+        const urlParams = new URLSearchParams(window.location.search);
+        const GROUP_ID_DID = urlParams.get("did");
+        const GROUP_ID_PH = urlParams.get("ph");
 
-    let selectedLine = "";
-
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
-    const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
-
-    function showLineButtons() {
-        document.getElementById("complaintButton").style.display = "none";
-        document.getElementById("lineButtons").style.display = "flex";
-    }
-
-    function showForm(lineType) {
-        selectedLine = lineType;
-        document.getElementById("lineButtons").style.display = "none";
-        document.getElementById("formContainer").style.display = "flex";
-    }
-
-    document.getElementById('submitButton').addEventListener('click', async () => {
-        const phoneNumber = document.getElementById('phoneNumber').value;
-        const callTime = document.getElementById('callTime').value;
-        let comment = document.getElementById('comment').value || "";
-        const secondLine = document.getElementById('secondLine').value;
-
-        if (!phoneNumber || !callTime || !secondLine) {
-            alert("Пожалуйста, заполните все обязательные поля.");
-            return;
+        if (!GROUP_ID_DID || !GROUP_ID_PH) {
+            alert("Групповые ID не получены. Проверьте URL WebApp.");
+            throw new Error("Групповые ID не получены");
         }
 
-        if (selectedLine === "DID") {
-            comment = comment.trim() + " @DID_Global_bot";
+        console.log("GROUP_ID_DID:", GROUP_ID_DID);
+        console.log("GROUP_ID_PH:", GROUP_ID_PH);
+
+        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0";
+        let selectedLine = "";
+
+        const tg = window.Telegram.WebApp;
+        tg.ready(); // Инициализация Telegram WebApp API
+        const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
+        const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
+
+        function showLineButtons() {
+            document.getElementById("complaintButton").style.display = "none";
+            document.getElementById("lineButtons").style.display = "flex";
         }
 
-        const message = `
-        🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
-        📞 Линия: ${selectedLine}
-        ☎️ Номер телефона: ${phoneNumber}
-        ⏰ Время звонка: ${callTime}
-        📲 Дозвон с другой линии: ${secondLine}
-        💬 Комментарий: ${comment}`;
+        function showForm(lineType) {
+            selectedLine = lineType;
+            document.getElementById("lineButtons").style.display = "none";
+            document.getElementById("formContainer").style.display = "flex";
+        }
 
-    const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
+        document.getElementById('submitButton').addEventListener('click', async () => {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const callTime = document.getElementById('callTime').value;
+            let comment = document.getElementById('comment').value || "";
+            const secondLine = document.getElementById('secondLine').value;
 
-console.log("Sending message to group ID:", groupId);
+            if (!phoneNumber || !callTime || !secondLine) {
+                alert("Пожалуйста, заполните все обязательные поля.");
+                return;
+            }
 
-try {
-    const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            chat_id: groupId,
-            text: message,
-            parse_mode: "HTML",
-            reply_markup: JSON.stringify({
-                inline_keyboard: [[
-                    { text: "Ответить", callback_data: `answer_${userId}` }
-                ]]
-            })
-        })
-    });
+            if (selectedLine === "DID") {
+                comment = comment.trim() + " @DID_Global_bot";
+            }
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Telegram API Error:", errorText);
-        alert(`Ошибка отправки заявки. Ответ сервера: ${errorText}`);
-    } else {
-        tg.close(); // Закрыть WebApp после успешной отправки
-    }
-} catch (error) {
-    console.error("Fetch Error:", error);
-    alert("Не удалось отправить заявку.");
-}
+            const message = `
+            🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
+            📞 Линия: ${selectedLine}
+            ☎️ Номер телефона: ${phoneNumber}
+            ⏰ Время звонка: ${callTime}
+            📲 Дозвон с другой линии: ${secondLine}
+            💬 Комментарий: ${comment}`;
 
+            const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
+
+            console.log("Sending message to group ID:", groupId);
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        chat_id: groupId,
+                        text: message,
+                        parse_mode: "HTML",
+                        reply_markup: {
+                            inline_keyboard: [[
+                                { text: "Ответить", callback_data: `answer_${userId}` }
+                            ]]
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("Telegram API Error:", errorText);
+                    alert(`Ошибка отправки заявки. Ответ сервера: ${errorText}`);
+                } else {
+                    tg.close(); // Закрыть WebApp после успешной отправки
+                }
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                alert("Не удалось отправить заявку.");
+            }
+        });
+    </script>
+</body>
+</html>
