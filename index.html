@@ -114,81 +114,79 @@
     </div>
 
     <script>
-        const BOT_TOKEN = "7633978350:AAGRf2rNJmFkCl2LVTGEXMw49z_FZJpQby0";
-        const GROUP_ID_DID = -1002424881153;
-        const GROUP_ID_PH = -1002417008521;
-        let selectedLine = "";
+    const urlParams = new URLSearchParams(window.location.search);
+    const GROUP_ID_DID = urlParams.get("did");
+    const GROUP_ID_PH = urlParams.get("ph");
 
-        const tg = window.Telegram.WebApp;
-        tg.ready(); // Инициализация Telegram WebApp API
-        const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
-        const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
+    let selectedLine = "";
 
-        function showLineButtons() {
-            document.getElementById("complaintButton").style.display = "none";
-            document.getElementById("lineButtons").style.display = "flex";
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    const userName = tg.initDataUnsafe.user?.username || "Неизвестно";
+    const userId = tg.initDataUnsafe.user?.id || "Неизвестно";
+
+    function showLineButtons() {
+        document.getElementById("complaintButton").style.display = "none";
+        document.getElementById("lineButtons").style.display = "flex";
+    }
+
+    function showForm(lineType) {
+        selectedLine = lineType;
+        document.getElementById("lineButtons").style.display = "none";
+        document.getElementById("formContainer").style.display = "flex";
+    }
+
+    document.getElementById('submitButton').addEventListener('click', async () => {
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const callTime = document.getElementById('callTime').value;
+        let comment = document.getElementById('comment').value || "";
+        const secondLine = document.getElementById('secondLine').value;
+
+        if (!phoneNumber || !callTime || !secondLine) {
+            alert("Пожалуйста, заполните все обязательные поля.");
+            return;
         }
 
-        function showForm(lineType) {
-            selectedLine = lineType;
-            document.getElementById("lineButtons").style.display = "none";
-            document.getElementById("formContainer").style.display = "flex";
+        if (selectedLine === "DID") {
+            comment = comment.trim() + " @DID_Global_bot";
         }
 
-        document.getElementById('submitButton').addEventListener('click', async () => {
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const callTime = document.getElementById('callTime').value;
-            let comment = document.getElementById('comment').value || "";
-            const secondLine = document.getElementById('secondLine').value;
+        const message = `
+        🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
+        📞 Линия: ${selectedLine}
+        ☎️ Номер телефона: ${phoneNumber}
+        ⏰ Время звонка: ${callTime}
+        📲 Дозвон с другой линии: ${secondLine}
+        💬 Комментарий: ${comment}`;
 
-            if (!phoneNumber || !callTime || !secondLine) {
-                alert("Пожалуйста, заполните все обязательные поля.");
-                return;
-            }
+        const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
 
-            // Добавляем @DID_Global_bot, только если выбрана Линия DID
-            if (selectedLine === "DID") {
-                comment = comment.trim() + " @DID_Global_bot";
-            }
-
-            const message = `
-            🆕 Новая заявка от пользователя @${userName} (ID: ${userId}):
-            📞 Линия: ${selectedLine}
-            ☎️ Номер телефона: ${phoneNumber}
-            ⏰ Время звонка: ${callTime}
-            📲 Дозвон с другой линии: ${secondLine}
-            💬 Комментарий: ${comment}`;
-
-            const groupId = selectedLine === "DID" ? GROUP_ID_DID : GROUP_ID_PH;
-
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        chat_id: groupId,
-                        text: message,
-                        parse_mode: "HTML",
-                        reply_markup: JSON.stringify({
-                            inline_keyboard: [[
-                                { text: "Ответить", callback_data: `answer_${userId}` }
-                            ]]
-                        })
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    chat_id: groupId,
+                    text: message,
+                    parse_mode: "HTML",
+                    reply_markup: JSON.stringify({
+                        inline_keyboard: [[
+                            { text: "Ответить", callback_data: `answer_${userId}` }
+                        ]]
                     })
-                });
+                })
+            });
 
-                if (response.ok) {
-                    tg.close(); // Закрыть WebApp после успешной отправки
-                } else {
-                    alert("Ошибка отправки заявки.");
-                }
-            } catch (error) {
-                console.error("Ошибка отправки:", error);
-                alert("Не удалось отправить заявку.");
+            if (response.ok) {
+                tg.close();
+            } else {
+                alert("Ошибка отправки заявки.");
             }
-        });
-    </script>
-</body>
-</html>
+        } catch (error) {
+            console.error("Ошибка отправки:", error);
+            alert("Не удалось отправить заявку.");
+        }
+    });
+</script>
