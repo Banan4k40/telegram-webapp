@@ -26,14 +26,10 @@
     }
 
     #fox-image {
-      width: 120px;
+      width: 140px;
       height: auto;
-      animation: blink 0.3s ease-in-out infinite;
-    }
-
-    @keyframes blink {
-      0%, 90%, 100% { filter: brightness(1); }
-      95% { filter: brightness(0.3); }
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     h1 {
@@ -110,9 +106,9 @@
 </head>
 <body>
 
-  <!-- 🦊 Лисичка зверху по центру -->
+  <!-- 🦊 Лисичка над заголовком -->
   <div id="fox-avatar">
-    <img id="fox-image" src="https://github.com/Banan4k40/telegram-webapp/blob/main/fox_avatar.png" alt="Fox Avatar" />
+    <img id="fox-image" src="https://raw.githubusercontent.com/Banan4k40/telegram-webapp/main/fox_avatar.png" alt="Fox Avatar" />
   </div>
 
   <h1>Поддержка Телефонии</h1>
