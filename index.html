@@ -166,7 +166,10 @@
                 secondLine: secondLine
             };
 
-            tg.sendData(JSON.stringify(data)); // відправка у Python-бот
+            tg.sendData(JSON.stringify(data));
+
+            // ✅ Показуємо повідомлення
+            alert("✅ Заявка успешно отправлена!");
             tg.close();
         });
     </script>
