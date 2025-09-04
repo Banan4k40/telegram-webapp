@@ -170,7 +170,16 @@
 
             // ✅ Показуємо повідомлення
             alert("✅ Заявка успешно отправлена!");
-            tg.close();
+
+            // 🧹 Очищуємо форму
+            document.getElementById('phoneNumber').value = "";
+            document.getElementById('callTime').value = "";
+            document.getElementById('comment').value = "";
+            document.getElementById('secondLine').value = "";
+
+            // Повертаємось до вибору лінії
+            document.getElementById("formContainer").style.display = "none";
+            document.getElementById("lineButtons").style.display = "flex";
         });
     </script>
 </body>
