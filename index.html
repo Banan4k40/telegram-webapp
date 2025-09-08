@@ -79,7 +79,14 @@
             font-size: 14px;
         }
 
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
         .form-container button {
+            flex: 1;
             padding: 10px;
             margin-top: 10px;
             background: linear-gradient(135deg, #43cea2, #185a9d);
@@ -92,6 +99,14 @@
 
         .form-container button:hover {
             background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #ff512f, #dd2476);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #ff6a3d, #e74c7c);
         }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -127,7 +142,12 @@
             <option value="Да">Да</option>
             <option value="Нет">Нет</option>
         </select>
-        <button id="submitButton">Отправить заявку</button>
+
+        <!-- кнопки отправки и возврата -->
+        <div class="form-buttons">
+            <button id="backButton" class="back-button">⬅ Назад</button>
+            <button id="submitButton">Отправить</button>
+        </div>
     </div>
 
     <script>
@@ -156,6 +176,19 @@
             document.getElementById("formContainer").style.display = "flex";
         }
 
+        // Кнопка "Назад"
+        document.getElementById('backButton').addEventListener('click', () => {
+            document.getElementById("formContainer").style.display = "none";
+            document.getElementById("lineButtons").style.display = "flex";
+
+            // очищаем форму
+            document.getElementById('phoneNumber').value = "";
+            document.getElementById('callTime').value = "";
+            document.getElementById('comment').value = "";
+            document.getElementById('secondLine').value = "";
+        });
+
+        // Кнопка "Отправить"
         document.getElementById('submitButton').addEventListener('click', async () => {
             const phoneNumber = document.getElementById('phoneNumber').value;
             const callTime = document.getElementById('callTime').value;
@@ -202,12 +235,12 @@
 
                 if (response.ok) {
                     alert("✅ Заявка успешно отправлена!");
-                    // очистка формы
+                    // очищаем форму
                     document.getElementById('phoneNumber').value = "";
                     document.getElementById('callTime').value = "";
                     document.getElementById('comment').value = "";
                     document.getElementById('secondLine').value = "";
-                    // возвращаем на выбор линий
+                    // возвращаем на выбор линии
                     document.getElementById("formContainer").style.display = "none";
                     document.getElementById("lineButtons").style.display = "flex";
                 } else {
