@@ -67,6 +67,56 @@
             gap: 15px;
             margin-bottom: 10px;
         }
+
+        .form-container {
+            display: none;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        .form-container input, .form-container textarea, .form-container select {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .form-container button {
+            flex: 1;
+            padding: 10px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-container button:hover {
+            background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #ff512f, #dd2476);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #ff6a3d, #e74c7c);
+        }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -92,19 +142,55 @@
         </div>
     </div>
 
+    <!-- Форма -->
+    <div class="form-container" id="formContainer">
+        <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
+        <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
+        <textarea id="comment" placeholder="Добавьте комментарий" rows="4"></textarea>
+        <select id="secondLine" required>
+            <option value="">Был дозвон с другой линии?</option>
+            <option value="Да">Да</option>
+            <option value="Нет">Нет</option>
+        </select>
+
+        <!-- кнопки отправки и возврата -->
+        <div class="form-buttons">
+            <button id="backButton" class="back-button">⬅ Назад</button>
+            <button id="submitButton">Отправить</button>
+        </div>
+    </div>
+
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
 
+        let selectedLine = "";
+
         function showLineButtons() {
-            document.getElementById("complaintButton").style.display = "none"; // ховаємо кнопку "Жалобы"
-            document.getElementById("chooseText").style.display = "block";     // показуємо текст
-            document.getElementById("lineButtons").style.display = "flex";    // показуємо кнопки ліній
+            document.getElementById("complaintButton").style.display = "none"; 
+            document.getElementById("chooseText").style.display = "block";     
+            document.getElementById("lineButtons").style.display = "flex";    
         }
 
         function showForm(lineType) {
-            alert("Вибрана лінія: " + lineType); // тут буде твоя форма
+            selectedLine = lineType;
+            document.getElementById("lineButtons").style.display = "none";
+            document.getElementById("chooseText").style.display = "none"; // ховаємо текст при відкритті форми
+            document.getElementById("formContainer").style.display = "flex";
         }
+
+        // Кнопка "Назад"
+        document.getElementById('backButton').addEventListener('click', () => {
+            document.getElementById("formContainer").style.display = "none";
+            document.getElementById("lineButtons").style.display = "flex";
+            document.getElementById("chooseText").style.display = "block"; // знову показуємо підказку
+
+            // очищаем форму
+            document.getElementById('phoneNumber').value = "";
+            document.getElementById('callTime').value = "";
+            document.getElementById('comment').value = "";
+            document.getElementById('secondLine').value = "";
+        });
     </script>
 </body>
 </html>
