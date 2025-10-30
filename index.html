@@ -1,55 +1,98 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поддержка Телефонии</title>
+    <title>Підтримка Телефонії</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
         }
 
         h1 {
-            font-size: 2rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 3rem;
             margin-bottom: 20px;
         }
 
         .complaint-button {
             padding: 15px 25px;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            margin: 5px;
-            width: 160px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 8px;
+            width: calc(50% - 16px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .complaint-button:active {
+            transform: scale(0.95);
         }
 
         .complaint-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .complaint-button.primary {
+            width: 100%;
+            padding: 20px;
+            font-size: 18px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         }
 
         .line-buttons {
             display: none;
             flex-direction: column;
             align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .button-row {
@@ -57,104 +100,282 @@
             justify-content: center;
             gap: 15px;
             margin-bottom: 10px;
+            width: 100%;
         }
 
         .form-container {
             display: none;
             flex-direction: column;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-title {
+            color: #667eea;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
             text-align: center;
         }
 
-        .form-container input, .form-container textarea, .form-container select {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
             font-size: 14px;
         }
 
-        .form-buttons {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
+        .form-container input,
+        .form-container textarea,
+        .form-container select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #333;
+            transition: border-color 0.3s ease;
+            background: white;
         }
 
-        .form-container button {
-            flex: 1;
-            padding: 10px;
+        .form-container input:focus,
+        .form-container textarea:focus,
+        .form-container select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-container input.error,
+        .form-container textarea.error,
+        .form-container select.error {
+            border-color: #f5576c;
+        }
+
+        .error-message {
+            color: #f5576c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-container textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .submit-button {
+            padding: 15px;
             margin-top: 10px;
-            background: linear-gradient(135deg, #43cea2, #185a9d);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
         }
 
-        .form-container button:hover {
-            background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .submit-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .back-button {
-            background: linear-gradient(135deg, #ff512f, #dd2476);
+            padding: 12px;
+            margin-top: 10px;
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .back-button:hover {
-            background: linear-gradient(135deg, #ff6a3d, #e74c7c);
+            background: #667eea;
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+            color: white;
+            font-weight: 600;
+        }
+
+        .success-message.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        /* Покращена візуалізація статусу */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #38ef7d;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
         }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <h1>Поддержка Телефонии</h1>
+    <div class="container">
+        <div class="logo">📞</div>
+        <h1>Підтримка Телефонії</h1>
 
-    <!-- Кнопка "Жалобы" -->
-    <button class="complaint-button" id="complaintButton" onclick="showLineButtons()">Жалобы</button>
+        <!-- Головна кнопка -->
+        <button class="complaint-button primary" id="complaintButton" onclick="showLineButtons()">
+            <span class="status-indicator"></span>
+            Подати заявку
+        </button>
 
-    <!-- Кнопки для выбора линии -->
-    <div class="line-buttons" id="lineButtons">
-        <div class="button-row">
-            <button class="complaint-button" onclick="showForm('DID')">Линия DID</button>
-            <button class="complaint-button" onclick="showForm('PH')">Линия PH</button>
+        <!-- Кнопки вибору лінії -->
+        <div class="line-buttons" id="lineButtons">
+            <div class="button-row">
+                <button class="complaint-button" onclick="showForm('DID')">📡 DID</button>
+                <button class="complaint-button" onclick="showForm('PH')">☎️ PH</button>
+            </div>
+            <div class="button-row">
+                <button class="complaint-button" onclick="showForm('Black')">⚫ Black</button>
+                <button class="complaint-button" onclick="showForm('Gazik')">🚗 Gazik</button>
+            </div>
+            <div class="button-row">
+                <button class="complaint-button" onclick="showForm('Voiso')">📞 Voiso</button>
+            </div>
+            <button class="back-button" onclick="showMainButton()">◀️ Назад</button>
         </div>
-        <div class="button-row">
-            <button class="complaint-button" onclick="showForm('Black')">Black</button>
-            <button class="complaint-button" onclick="showForm('Gazik')">Gazik</button>
-        </div>
-        <div class="button-row">
-            <button class="complaint-button" onclick="showForm('Voiso')">Voiso</button>
-        </div>
-    </div>
 
-    <!-- Форма -->
-    <div class="form-container" id="formContainer">
-        <input type="text" id="phoneNumber" placeholder="Введите номер телефона" required>
-        <input type="text" id="callTime" placeholder="Введите время звонка (HH:MM)" required>
-        <textarea id="comment" placeholder="Добавьте комментарий" rows="4"></textarea>
-        <select id="secondLine" required>
-            <option value="">Был дозвон с другой линии?</option>
-            <option value="Да">Да</option>
-            <option value="Нет">Нет</option>
-        </select>
+        <!-- Форма -->
+        <div class="form-container" id="formContainer">
+            <div class="form-title" id="formTitle">Заявка на лінію</div>
+            
+            <div class="form-group">
+                <label for="phoneNumber">Номер телефону *</label>
+                <input type="tel" id="phoneNumber" placeholder="+380501234567" required>
+                <div class="error-message" id="phoneError">Введіть коректний номер телефону</div>
+            </div>
 
-        <!-- кнопки отправки и возврата -->
-        <div class="form-buttons">
-            <button id="backButton" class="back-button">⬅ Назад</button>
-            <button id="submitButton">Отправить</button>
+            <div class="form-group">
+                <label for="callTime">Час дзвінка *</label>
+                <input type="time" id="callTime" required>
+                <div class="error-message" id="timeError">Вкажіть час дзвінка</div>
+            </div>
+
+            <div class="form-group">
+                <label for="secondLine">Дозвон з іншої лінії? *</label>
+                <select id="secondLine" required>
+                    <option value="">Оберіть варіант</option>
+                    <option value="Так">✅ Так</option>
+                    <option value="Ні">❌ Ні</option>
+                </select>
+                <div class="error-message" id="secondLineError">Оберіть варіант</div>
+            </div>
+
+            <div class="form-group">
+                <label for="comment">Коментар</label>
+                <textarea id="comment" placeholder="Опишіть проблему (необов'язково)" rows="4"></textarea>
+            </div>
+
+            <button class="submit-button" id="submitButton">📤 Відправити заявку</button>
+            <button class="back-button" onclick="backToLines()">◀️ Назад</button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="color: #667eea; margin-top: 10px;">Відправка...</p>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                ✅ Заявка успішно відправлена!
+            </div>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
+        tg.expand();
 
-        // Читаем параметры из URL
+        // Читаємо параметри з URL
         const urlParams = new URLSearchParams(window.location.search);
         const GROUP_ID_DID = urlParams.get("did");
         const GROUP_ID_PH = urlParams.get("ph");
@@ -165,6 +386,12 @@
 
         let selectedLine = "";
 
+        // Функції навігації
+        function showMainButton() {
+            document.getElementById("lineButtons").style.display = "none";
+            document.getElementById("complaintButton").style.display = "flex";
+        }
+
         function showLineButtons() {
             document.getElementById("complaintButton").style.display = "none";
             document.getElementById("lineButtons").style.display = "flex";
@@ -174,39 +401,113 @@
             selectedLine = lineType;
             document.getElementById("lineButtons").style.display = "none";
             document.getElementById("formContainer").style.display = "flex";
+            document.getElementById("formTitle").textContent = `Заявка на лінію ${lineType}`;
+            
+            // Очищаємо форму
+            resetForm();
         }
 
-        // Кнопка "Назад"
-        document.getElementById('backButton').addEventListener('click', () => {
+        function backToLines() {
             document.getElementById("formContainer").style.display = "none";
             document.getElementById("lineButtons").style.display = "flex";
+            resetForm();
+        }
 
-            // очищаем форму
+        function resetForm() {
             document.getElementById('phoneNumber').value = "";
             document.getElementById('callTime').value = "";
             document.getElementById('comment').value = "";
             document.getElementById('secondLine').value = "";
+            document.getElementById('successMessage').classList.remove('active');
+            clearErrors();
+        }
+
+        // Валідація
+        function validatePhone(phone) {
+            // Підтримка різних форматів
+            const regex = /^[\+]?[0-9]{10,15}$/;
+            return regex.test(phone.replace(/[\s\-\(\)]/g, ''));
+        }
+
+        function validateTime(time) {
+            return time !== "";
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('input, select, textarea').forEach(el => el.classList.remove('error'));
+        }
+
+        function showError(fieldId, errorId) {
+            document.getElementById(fieldId).classList.add('error');
+            document.getElementById(errorId).style.display = 'block';
+        }
+
+        // Валідація в реальному часі
+        document.getElementById('phoneNumber').addEventListener('input', function() {
+            if (this.value && validatePhone(this.value)) {
+                this.classList.remove('error');
+                document.getElementById('phoneError').style.display = 'none';
+            }
         });
 
-        // Кнопка "Отправить"
+        document.getElementById('callTime').addEventListener('change', function() {
+            if (this.value) {
+                this.classList.remove('error');
+                document.getElementById('timeError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('secondLine').addEventListener('change', function() {
+            if (this.value) {
+                this.classList.remove('error');
+                document.getElementById('secondLineError').style.display = 'none';
+            }
+        });
+
+        // Відправка форми
         document.getElementById('submitButton').addEventListener('click', async () => {
-            const phoneNumber = document.getElementById('phoneNumber').value;
+            clearErrors();
+
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
             const callTime = document.getElementById('callTime').value;
-            const comment = document.getElementById('comment').value;
+            const comment = document.getElementById('comment').value.trim();
             const secondLine = document.getElementById('secondLine').value;
 
-            if (!phoneNumber || !callTime || !secondLine) {
-                alert("Пожалуйста, заполните все обязательные поля.");
+            let isValid = true;
+
+            // Валідація полів
+            if (!phoneNumber || !validatePhone(phoneNumber)) {
+                showError('phoneNumber', 'phoneError');
+                isValid = false;
+            }
+
+            if (!callTime || !validateTime(callTime)) {
+                showError('callTime', 'timeError');
+                isValid = false;
+            }
+
+            if (!secondLine) {
+                showError('secondLine', 'secondLineError');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                tg.showAlert("❌ Будь ласка, заповніть всі обов'язкові поля коректно");
                 return;
             }
 
-            const message = `
-            🆕 Новая заявка от пользователя @${tg.initDataUnsafe.user?.username || "Неизвестно"} (ID: ${tg.initDataUnsafe.user?.id || "Неизвестно"}):
-            📞 Линия: ${selectedLine}
-            ☎️ Номер телефона: ${phoneNumber}
-            ⏰ Время звонка: ${callTime}
-            📲 Дозвон с другой линии: ${secondLine}
-            💬 Комментарий: ${comment}`;
+            // Показуємо індикатор завантаження
+            document.getElementById('submitButton').disabled = true;
+            document.getElementById('loading').classList.add('active');
+
+            const user = tg.initDataUnsafe.user || {};
+            const message = `🆕 Нова заявка від @${user.username || "Невідомо"} (ID: ${user.id || "Невідомо"}):
+📞 Лінія: ${selectedLine}
+☎️ Номер: ${phoneNumber}
+⏰ Час: ${callTime}
+📲 Дозвон з іншої лінії: ${secondLine}
+💬 Коментар: ${comment || 'Немає'}`;
 
             let groupId;
             switch (selectedLine) {
@@ -224,32 +525,45 @@
                     body: JSON.stringify({
                         chat_id: groupId,
                         text: message,
-                        parse_mode: "HTML",
                         reply_markup: {
                             inline_keyboard: [[
-                                { text: "Ответить", callback_data: `answer_${tg.initDataUnsafe.user?.id}` }
+                                { text: "✅ Прийняти", callback_data: `accept_0_${user.id}` },
+                                { text: "❌ Відхилити", callback_data: `reject_0_${user.id}` }
+                            ], [
+                                { text: "💬 Відповісти", callback_data: `answer_0_${user.id}` }
                             ]]
                         }
                     })
                 });
 
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('submitButton').disabled = false;
+
                 if (response.ok) {
-                    alert("✅ Заявка успешно отправлена!");
-                    // очищаем форму
-                    document.getElementById('phoneNumber').value = "";
-                    document.getElementById('callTime').value = "";
-                    document.getElementById('comment').value = "";
-                    document.getElementById('secondLine').value = "";
-                    // возвращаем на выбор линии
-                    document.getElementById("formContainer").style.display = "none";
-                    document.getElementById("lineButtons").style.display = "flex";
+                    document.getElementById('successMessage').classList.add('active');
+                    tg.showAlert("✅ Заявка успішно відправлена! Ми відповімо найближчим часом.");
+                    
+                    // Очищаємо форму через 2 секунди і повертаємось до вибору ліній
+                    setTimeout(() => {
+                        backToLines();
+                    }, 2000);
                 } else {
-                    alert("❌ Ошибка отправки заявки.");
+                    tg.showAlert("❌ Помилка відправки. Спробуйте ще раз.");
                 }
             } catch (error) {
-                console.error("Ошибка отправки:", error);
-                alert("❌ Не удалось отправить заявку.");
+                console.error("Помилка відправки:", error);
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('submitButton').disabled = false;
+                tg.showAlert("❌ Не вдалося відправити заявку. Перевірте з'єднання.");
             }
+        });
+
+        // Автозаповнення часу (поточний час)
+        window.addEventListener('load', () => {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('callTime').value = `${hours}:${minutes}`;
         });
     </script>
 </body>
